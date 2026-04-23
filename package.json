@@ -1,0 +1,44 @@
+{
+  "name": "8bitgo",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Phaser-powered 8bit iOS game starter with pixel styling, IAP, and release automation.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/888wing/8bitgo.git"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "vite",
+    "validate:billing": "node scripts/validate-billing.mjs",
+    "release:guard": "node scripts/validate-billing.mjs --strict && node scripts/validate-assets.mjs",
+    "build:web": "npm run validate:billing && tsc --noEmit && vite build",
+    "build": "npm run build:web",
+    "preview": "vite preview",
+    "cap:sync": "npx cap sync",
+    "cap:copy": "npx cap copy",
+    "ios:prepare": "npm run build:web && node scripts/ensure-ios-platform.mjs && npx cap sync ios && npm run verify:ios-bundle",
+    "ios:open": "npm run ios:prepare && npx cap open ios",
+    "ios:verify": "npm run ios:prepare && xcodebuild -project ios/App/App.xcodeproj -scheme App -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build",
+    "verify:ios-bundle": "node scripts/verify-ios-bundle.mjs",
+    "capture:screenshots": "node scripts/capture-screenshots.mjs",
+    "review:packet": "node scripts/build-review-packet.mjs",
+    "validate:assets": "node scripts/validate-assets.mjs"
+  },
+  "dependencies": {
+    "@capacitor/cli": "^8.3.1",
+    "@capacitor/core": "^8.3.1",
+    "@capacitor/ios": "^8.3.1",
+    "@revenuecat/purchases-capacitor": "^13.0.1",
+    "phaser": "^3.90.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.7.2",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.9"
+  }
+}
