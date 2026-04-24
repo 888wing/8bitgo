@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 
 import { assetManifest } from "../../assets/manifest";
-import { preloadManifest } from "../core/assetManifest";
+import { createManifestAnimations, preloadManifest } from "../core/assetManifest";
 import { applyPixelSceneDefaults } from "../core/pixelScale";
 import { HudRoot } from "../ui/HudRoot";
 
@@ -16,8 +16,8 @@ export class BootScene extends Phaser.Scene {
   }
 
   create(): void {
+    createManifestAnimations(this, assetManifest);
     this.ui.showBooting("Preparing cabinet...");
     this.scene.start("MenuScene");
   }
 }
-

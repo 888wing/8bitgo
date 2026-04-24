@@ -22,6 +22,14 @@ export interface SpriteSheetAssetDescriptor extends BaseAssetDescriptor {
   frameHeight: number;
 }
 
+export interface SpriteAnimationDescriptor {
+  key: string;
+  spritesheetKey: string;
+  frames: number[];
+  frameRate: number;
+  repeat?: number;
+}
+
 export type AssetDescriptor =
   | ImageAssetDescriptor
   | AudioAssetDescriptor
@@ -29,6 +37,7 @@ export type AssetDescriptor =
 
 export interface AssetManifest {
   assets: AssetDescriptor[];
+  animations?: SpriteAnimationDescriptor[];
 }
 
 export function preloadManifest(scene: Phaser.Scene, manifest: AssetManifest): void {
@@ -50,3 +59,20 @@ export function preloadManifest(scene: Phaser.Scene, manifest: AssetManifest): v
   }
 }
 
+export function createManifestAnimations(scene: Phaser.Scene, manifest: AssetManifest): void {
+  for (const animation of manifest.animations ?? []) {
+    if (scene.anims.exists(animation.key)) {
+      continue;
+    }
+
+    scene.anims.create({
+      key: animation.key,
+      frames: animation.frames.map((frame) => ({
+        key: animation.spritesheetKey,
+        frame
+      })),
+      frameRate: animation.frameRate,
+      repeat: animation.repeat ?? -1
+    });
+  }
+}

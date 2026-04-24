@@ -27,7 +27,13 @@
     "verify:ios-bundle": "node scripts/verify-ios-bundle.mjs",
     "capture:screenshots": "node scripts/capture-screenshots.mjs",
     "review:packet": "node scripts/build-review-packet.mjs",
-    "validate:assets": "node scripts/validate-assets.mjs"
+    "validate:assets": "node scripts/validate-assets.mjs",
+    "sprite:forge": "node scripts/sprite-forge.mjs",
+    "sprite:setup": "node scripts/sprite-forge.mjs setup --install-deps",
+    "sprite:options": "node scripts/sprite-forge.mjs options",
+    "sprite:prompt": "node scripts/sprite-forge.mjs prompt",
+    "sprite:process": "node scripts/sprite-forge.mjs process",
+    "sprite:manifest": "node scripts/sprite-forge.mjs manifest"
   },
   "dependencies": {
     "@capacitor/cli": "^8.3.1",

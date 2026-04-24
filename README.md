@@ -62,6 +62,11 @@ VITE_8BITGO_FULL_UNLOCK_PRODUCT_ID=com.eightbitgo.starter.full_unlock
 - `npm run ios:verify`: run iOS build through `xcodebuild` with code signing disabled.
 - `npm run review:packet`: generate App Review notes under `tmp/review-packet`.
 - `npm run capture:screenshots`: create screenshot capture checklist under `tmp/screenshots`.
+- `npm run sprite:setup`: install the pinned `agent-sprite-forge` processor into a local tool checkout.
+- `npm run sprite:prompt`: generate an image-generation prompt for a sprite sheet.
+- `npm run sprite:process`: convert a raw generated sheet into transparent frames, GIF, spritesheet, and Phaser manifest entries.
+
+See [docs/sprite-forge.md](docs/sprite-forge.md) for the full animation and spritesheet workflow.
 
 ## Architecture
 

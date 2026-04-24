@@ -1,0 +1,9 @@
+{
+  "repository": "https://github.com/0x0funky/agent-sprite-forge.git",
+  "ref": "07c6be13e883d97bdcb5b91112b2990d8a0cfdce",
+  "toolDir": "tools/agent-sprite-forge",
+  "venvDir": "tools/.sprite-forge-venv",
+  "processorPath": "skills/generate2dsprite/scripts/generate2dsprite.py",
+  "outputRoot": "public/generated/sprites",
+  "manifestPath": "src/assets/spriteForge.generated.ts"
+}
