@@ -68,6 +68,8 @@ VITE_8BITGO_FULL_UNLOCK_PRODUCT_ID=com.eightbitgo.starter.full_unlock
 
 See [docs/sprite-forge.md](docs/sprite-forge.md) for the full animation and spritesheet workflow.
 
+For the first proposed game tech demo, see [docs/pixel-courier-mvp.md](docs/pixel-courier-mvp.md).
+
 ## Architecture
 
 The starter follows the Phaser skill split:
