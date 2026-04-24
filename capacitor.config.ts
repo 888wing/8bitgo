@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from "@capacitor/cli";
 
 const config: CapacitorConfig = {
-  appId: "com.eightbitgo.starter",
-  appName: "8bitgo Starter",
+  appId: "com.eightbitgo.pixelcourier",
+  appName: "Pixel Courier",
   webDir: "dist",
   backgroundColor: "#060813",
   zoomEnabled: false,
@@ -15,4 +15,3 @@ const config: CapacitorConfig = {
 };
 
 export default config;
-

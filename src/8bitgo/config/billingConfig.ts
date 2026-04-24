@@ -29,7 +29,7 @@ function readEnv(name: string): string {
 
 export const billingConfig: BillingConfig = {
   provider: "revenuecat",
-  entitlementId: readEnv("VITE_8BITGO_ENTITLEMENT_ID") || "8bitgo_starter_full",
+  entitlementId: readEnv("VITE_8BITGO_ENTITLEMENT_ID") || "pixel_courier_premium",
   offeringId: readEnv("VITE_8BITGO_OFFERING_ID") || "launch",
   packageId: readEnv("VITE_8BITGO_PACKAGE_ID") || "$rc_lifetime",
   appleApiKey: readEnv("VITE_REVENUECAT_APPLE_API_KEY"),
@@ -40,10 +40,10 @@ export const billingConfig: BillingConfig = {
     fullUnlock: {
       productId:
         readEnv("VITE_8BITGO_FULL_UNLOCK_PRODUCT_ID") ||
-        "com.eightbitgo.starter.full_unlock",
+        "com.eightbitgo.pixelcourier.full_unlock",
       type: "non_consumable",
-      title: "Full Game Unlock",
-      description: "Unlock premium levels and modes."
+      title: "Premium Sectors Unlock",
+      description: "Unlock premium Pixel Courier sectors."
     }
   }
 };
@@ -62,4 +62,3 @@ export function resolveRevenueCatApiKey(
 
   return "";
 }
-

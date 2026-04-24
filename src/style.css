@@ -228,6 +228,43 @@ button {
   gap: 8px;
 }
 
+.courier-hud {
+  max-width: 100%;
+}
+
+.courier-controls {
+  pointer-events: auto;
+  display: grid;
+  gap: 10px;
+}
+
+.tool-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 7px;
+}
+
+.tool-button {
+  min-height: 34px;
+  border: 2px solid rgba(52, 231, 255, 0.72);
+  color: var(--cyan);
+  background: rgba(3, 4, 10, 0.82);
+  box-shadow: 3px 3px 0 var(--shadow);
+  cursor: pointer;
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+.tool-button.selected {
+  color: #1d1600;
+  border-color: var(--amber);
+  background: var(--amber);
+}
+
+.courier-actions {
+  grid-template-columns: repeat(2, 1fr);
+}
+
 .paywall-list {
   margin: 14px 0;
   padding-left: 18px;
@@ -274,4 +311,3 @@ button {
   );
   mix-blend-mode: screen;
 }
-

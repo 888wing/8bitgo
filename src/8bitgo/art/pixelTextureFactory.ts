@@ -121,6 +121,34 @@ export function ensureStarterPixelTextures(scene: Phaser.Scene): void {
         "LWWWWWWWWL",
         "LLLLLLLLLL"
       ]
+    },
+    {
+      key: "8bitgo.terminal",
+      palette,
+      pixels: [
+        "BBBBBBBB",
+        "BCCCCCCB",
+        "BCWWWWCB",
+        "BCWPPWCB",
+        "BCWPPWCB",
+        "BCWWWWCB",
+        "BCCCCCCB",
+        "BBBBBBBB"
+      ]
+    },
+    {
+      key: "8bitgo.glitch",
+      palette,
+      pixels: [
+        "P..P..P.",
+        ".P.W.P..",
+        "..PWP..P",
+        "PPPWWPPP",
+        "..PWP..P",
+        ".P.W.P..",
+        "P..P..P.",
+        "..P..P.."
+      ]
     }
   ];
 

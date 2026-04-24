@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 
-import { SampleGameScene } from "../../game/phaser/SampleGameScene";
+import { CourierGameScene } from "../../game/phaser/CourierGameScene";
 import type { AnalyticsService } from "../services/analytics/AnalyticsService";
 import type { BillingService } from "../services/billing/billingTypes";
 import type { ProfileStore } from "../services/profile/profileTypes";
@@ -19,7 +19,6 @@ export function registerScenes(dependencies: SceneDependencies): Phaser.Scene[] 
   return [
     new BootScene(dependencies.ui),
     new MenuScene(dependencies),
-    new SampleGameScene(dependencies)
+    new CourierGameScene(dependencies)
   ];
 }
-

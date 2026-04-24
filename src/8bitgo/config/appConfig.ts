@@ -33,10 +33,10 @@ export interface AppConfig {
 }
 
 export const appConfig: AppConfig = {
-  gameId: "8bitgo_starter",
-  title: "8bitgo Starter",
-  bundleId: "com.eightbitgo.starter",
-  sku: "com.eightbitgo.starter",
+  gameId: "pixel_courier",
+  title: "Pixel Courier",
+  bundleId: "com.eightbitgo.pixelcourier",
+  sku: "com.eightbitgo.pixelcourier",
   version: "0.1.0",
   orientation: "portrait",
   virtualSize: {
@@ -55,16 +55,15 @@ export const appConfig: AppConfig = {
     danger: "#ff6b86"
   },
   paywall: {
-    title: "Unlock Full Game",
-    subtitle: "Open the premium sector and keep the same 8bitgo purchase flow.",
+    title: "Unlock Premium Sectors",
+    subtitle: "Route deeper corrupted networks with denser hazards and harder command budgets.",
     bulletPoints: [
-      "Premium level access",
+      "Four premium route-planning sectors",
       "Restore purchases support",
       "Config-driven RevenueCat product",
-      "Bundled game code for App Review safety"
+      "One-time full unlock for this game"
     ],
-    purchaseLabel: "Unlock Full Game",
+    purchaseLabel: "Unlock Premium",
     restoreLabel: "Restore Purchases"
   }
 };
-

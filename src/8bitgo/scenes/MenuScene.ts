@@ -1,5 +1,9 @@
 import Phaser from "phaser";
 
+import {
+  getFirstFreeCourierLevelId,
+  getFirstPremiumCourierLevelId
+} from "../../game/content/courierLevels";
 import type { SceneDependencies } from "../core/registerScenes";
 
 export class MenuScene extends Phaser.Scene {
@@ -25,16 +29,19 @@ export class MenuScene extends Phaser.Scene {
 
   private render(): void {
     const { ui, profileStore, billing, analytics } = this.dependencies;
+    const freeLevelId = getFirstFreeCourierLevelId();
+    const premiumLevelId = getFirstPremiumCourierLevelId();
+
     ui.showMenu({
       profile: profileStore.get(),
       billing: billing.getSnapshot(),
       onStartFree: () => {
         analytics.track("level_started", {
-          levelId: "free-sector"
+          levelId: freeLevelId
         });
-        profileStore.setSelectedLevel("free-sector");
-        this.scene.start("SampleGameScene", {
-          levelId: "free-sector"
+        profileStore.setSelectedLevel(freeLevelId);
+        this.scene.start("CourierGameScene", {
+          levelId: freeLevelId
         });
       },
       onStartPremium: () => {
@@ -44,11 +51,11 @@ export class MenuScene extends Phaser.Scene {
         }
 
         analytics.track("level_started", {
-          levelId: "premium-sector"
+          levelId: premiumLevelId
         });
-        profileStore.setSelectedLevel("premium-sector");
-        this.scene.start("SampleGameScene", {
-          levelId: "premium-sector"
+        profileStore.setSelectedLevel(premiumLevelId);
+        this.scene.start("CourierGameScene", {
+          levelId: premiumLevelId
         });
       },
       onOpenPaywall: () => this.openPaywall("menu"),
@@ -82,9 +89,10 @@ export class MenuScene extends Phaser.Scene {
     const result = await billing.purchaseFullUnlock();
 
     if (result.kind === "purchased") {
-      profileStore.setSelectedLevel("premium-sector");
-      this.scene.start("SampleGameScene", {
-        levelId: "premium-sector"
+      const premiumLevelId = getFirstPremiumCourierLevelId();
+      profileStore.setSelectedLevel(premiumLevelId);
+      this.scene.start("CourierGameScene", {
+        levelId: premiumLevelId
       });
       return;
     }
@@ -116,4 +124,3 @@ export class MenuScene extends Phaser.Scene {
     });
   }
 }
-

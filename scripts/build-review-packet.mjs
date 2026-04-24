@@ -35,8 +35,8 @@ const env = {
 };
 
 const productId =
-  env.VITE_8BITGO_FULL_UNLOCK_PRODUCT_ID || "com.eightbitgo.starter.full_unlock";
-const entitlementId = env.VITE_8BITGO_ENTITLEMENT_ID || "8bitgo_starter_full";
+  env.VITE_8BITGO_FULL_UNLOCK_PRODUCT_ID || "com.eightbitgo.pixelcourier.full_unlock";
+const entitlementId = env.VITE_8BITGO_ENTITLEMENT_ID || "pixel_courier_premium";
 const offeringId = env.VITE_8BITGO_OFFERING_ID || "launch";
 const outputDir = join(process.cwd(), "tmp/review-packet");
 

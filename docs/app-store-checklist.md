@@ -2,8 +2,8 @@
 
 ## Before TestFlight
 
-- Replace bundle ID and app name if this starter is becoming a real game.
-- Replace `8bitgo Starter` copy with the real game title.
+- Confirm bundle ID and app name match the Pixel Courier App Store record.
+- Replace any remaining starter copy before submission.
 - Configure the RevenueCat Apple API key in `.env.local`.
 - Confirm App Store Connect product ID matches `VITE_8BITGO_FULL_UNLOCK_PRODUCT_ID`.
 - Run `npm run release:guard`.

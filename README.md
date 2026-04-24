@@ -45,10 +45,10 @@ Copy `.env.example` to `.env.local` and replace values before TestFlight or App 
 
 ```sh
 VITE_REVENUECAT_APPLE_API_KEY=appl_xxx
-VITE_8BITGO_ENTITLEMENT_ID=8bitgo_starter_full
+VITE_8BITGO_ENTITLEMENT_ID=pixel_courier_premium
 VITE_8BITGO_OFFERING_ID=launch
 VITE_8BITGO_PACKAGE_ID=\$rc_lifetime
-VITE_8BITGO_FULL_UNLOCK_PRODUCT_ID=com.eightbitgo.starter.full_unlock
+VITE_8BITGO_FULL_UNLOCK_PRODUCT_ID=com.eightbitgo.pixelcourier.full_unlock
 ```
 
 `VITE_DEV_PREMIUM_PREVIEW=true` enables browser-only purchase preview during development. Do not treat it as a real transaction.

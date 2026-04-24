@@ -54,11 +54,11 @@ function assertReverseDns(productId) {
 const env = loadEnv();
 const config = {
   appleApiKey: env.VITE_REVENUECAT_APPLE_API_KEY ?? "",
-  entitlementId: env.VITE_8BITGO_ENTITLEMENT_ID ?? "8bitgo_starter_full",
+  entitlementId: env.VITE_8BITGO_ENTITLEMENT_ID ?? "pixel_courier_premium",
   offeringId: env.VITE_8BITGO_OFFERING_ID ?? "launch",
   packageId: env.VITE_8BITGO_PACKAGE_ID ?? "$rc_lifetime",
   productId:
-    env.VITE_8BITGO_FULL_UNLOCK_PRODUCT_ID ?? "com.eightbitgo.starter.full_unlock"
+    env.VITE_8BITGO_FULL_UNLOCK_PRODUCT_ID ?? "com.eightbitgo.pixelcourier.full_unlock"
 };
 
 const warnings = [];
@@ -87,8 +87,8 @@ if (!assertReverseDns(config.productId)) {
   );
 }
 
-if (strict && config.productId === "com.eightbitgo.starter.full_unlock") {
-  warnings.push("Using starter product ID. This is acceptable only for the starter app.");
+if (strict && config.productId === "com.eightbitgo.pixelcourier.full_unlock") {
+  warnings.push("Using default Pixel Courier product ID. Confirm it exists in App Store Connect.");
 }
 
 for (const warning of warnings) {
