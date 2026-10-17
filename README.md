@@ -33,4 +33,6 @@
 
 ## 狀態
 
-設計階段，下一步是第一、二天的純文字原型。舊專案（8bitgo Phaser／Capacitor starter）可以從歷史 `53ab3d3` 取回。
+設計階段。第一、二天的純文字原型在 [prototype/](prototype/README.md)：執行 `node prototype/build.js`，再雙擊 `prototype/dist/index.html` 就可以玩。
+
+舊專案（8bitgo Phaser／Capacitor starter）可以從歷史 `53ab3d3` 取回。

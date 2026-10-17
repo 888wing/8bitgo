@@ -1,0 +1,10 @@
+{
+  "name": "seventh-seat-prototype",
+  "private": true,
+  "type": "module",
+  "description": "第七席：第一、二天的純文字原型",
+  "scripts": {
+    "test": "node --test",
+    "sim": "node sim.js"
+  }
+}
