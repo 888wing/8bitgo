@@ -11,7 +11,7 @@ async function loadFonts() {
   if (!document.fonts?.load) return;
   const used = JSON.stringify([C.WITNESSES, C.CLAIMS, C.EXHIBITS, C.REASONS, C.THOUGHTS, C.RULEBOOK, C.DAYS, UI]);
   const text = [...new Set(`${used}0123456789/`)].join('');
-  const faces = ['500 13px "Noto Sans TC"', '700 12px "Noto Sans TC"', '700 12px "LXGW WenKai TC"'];
+  const faces = ['400 12px "Noto Sans TC"', '500 13px "Noto Sans TC"', '700 12px "Noto Sans TC"', '700 12px "LXGW WenKai TC"'];
   const timeout = new Promise((resolve) => setTimeout(resolve, 8000));
   await Promise.race([Promise.allSettled(faces.map((f) => document.fonts.load(f, text))), timeout]);
 }

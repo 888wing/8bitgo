@@ -10,7 +10,7 @@ export const PAL = {
   brassDark: '#7a5f30', brassLight: '#dbbd78', red: '#b3261e', trust: '#24466f',
   doubt: '#7a4d14', skin: '#d8a982', skinShade: '#ad7c5a', hair: '#2a2626',
   grey: '#8d928e', robe: '#1b1d22', judgeRed: '#8a2a24', khaki: '#8a7a52',
-  suit: '#33404d', metal: '#b3b9bb', bag: '#c4cfd2', photo: '#2c302e',
+  suit: '#33404d', metal: '#b3b9bb', skinLight: '#eec7a1', photo: '#2c302e',
 };
 
 const T = (str, opts) => P.text(str, opts).canvas;
@@ -430,7 +430,7 @@ function photo(s) {
 
 function bag(s) {
   const p = painter(84, 62, s);
-  p.rect(0, 0, 84, 62, PAL.bag);
+  p.rect(0, 0, 84, 62, PAL.metal);
   p.frame(0, 0, 84, 62, PAL.paperShade);
   p.rect(0, 0, 84, 9, PAL.suit);
   p.text('證物 P2', 4, 0, { size: 8, weight: 700, color: PAL.white, threshold: 90 });
@@ -484,7 +484,7 @@ function icon(kind) {
     P.rect(ctx, 2, 2, 20, 13, PAL.photo);
     P.line(ctx, 3, 13, 20, 4, PAL.grey);
   } else if (kind === 'bag') {
-    P.rect(ctx, 0, 0, 24, 18, PAL.bag);
+    P.rect(ctx, 0, 0, 24, 18, PAL.metal);
     P.rect(ctx, 0, 0, 24, 3, PAL.suit);
     P.rect(ctx, 10, 6, 5, 9, PAL.metal);
   } else {

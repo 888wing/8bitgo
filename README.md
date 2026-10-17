@@ -39,4 +39,6 @@
 - 雙擊 `prototype/dist/index.html`：第一、二天的純文字原型，試核心規則。
 - 雙擊 `prototype/dist/desk.html`：第一天的法庭桌面，像素畫面的手感切片（要連網）。
 
+美術的目標樣子：[風格定稿圖](art/style-frame/court-desk@4x.png)（第一版，說明見 [06 §10](docs/06-art.md#10-風格定稿圖第一版)）。
+
 舊專案（8bitgo Phaser／Capacitor starter）可以從歷史 `53ab3d3` 取回。

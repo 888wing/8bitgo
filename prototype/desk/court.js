@@ -68,8 +68,8 @@ const voiceOf = (who) => ({
 
 const STYLE = {
   dialogue: { size: 13, weight: 500, width: 124, lineHeight: 16, threshold: 110 },
-  name: { size: 12, weight: 700, lineHeight: 13, color: PAL.ink, threshold: 120 },
-  header: { size: 12, weight: 700, lineHeight: 14, color: PAL.ink, threshold: 120 },
+  name: { size: 12, weight: 400, lineHeight: 13, color: PAL.ink, threshold: 120 },
+  header: { size: 12, weight: 400, lineHeight: 14, color: PAL.ink, threshold: 120 },
   claim: { font: 'hand', size: 12, weight: 700, width: 134, lineHeight: 14, color: PAL.ink, threshold: 110 },
   reason: { font: 'hand', size: 12, weight: 700, width: 132, lineHeight: 13, color: PAL.red, threshold: 110 },
   thought: { font: 'hand', size: 12, weight: 700, width: 132, lineHeight: 13, color: PAL.grey, threshold: 110 },

@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第七席風格定稿圖</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@700&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<style>
+:root { color-scheme: dark; }
+body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #0e1110; }
+canvas { display: block; image-rendering: pixelated; }
+</style>
+</head>
+<body>
+<canvas id="frame" aria-label="第七席風格定稿圖：法庭桌面"></canvas>
+<script type="module">
+import { drawFrame } from './frame.js';
+
+// 先載入畫面上的字，再畫；然後按螢幕實際像素找最大的整數倍顯示。
+const text = '偵緝督察鄭志雄（控方）起火點在三樓樓梯地下門腳都有黑痕？打火機在起火點找到，刻著「樂」字火石平、棉芯乾，點著？被告簽署口供，承認放火佢只係喺地下點過紙？鄭督察……我唔記得。證物對照須知退庭信疑三樓樓梯P2P11/';
+await Promise.allSettled(['400 12px "Noto Sans TC"', '500 13px "Noto Sans TC"', '700 12px "Noto Sans TC"', '700 12px "LXGW WenKai TC"'].map((f) => document.fonts.load(f, text)));
+const canvas = drawFrame(document.getElementById('frame'));
+const fit = () => {
+  const dpr = window.devicePixelRatio || 1;
+  const k = Math.max(1, Math.floor(Math.min((innerWidth - 32) * dpr / 480, (innerHeight - 32) * dpr / 270)));
+  canvas.style.width = `${(480 * k) / dpr}px`;
+  canvas.style.height = `${(270 * k) / dpr}px`;
+};
+fit();
+addEventListener('resize', fit);
+document.title = '第七席風格定稿圖';
+window.__frameReady = true;
+</script>
+</body>
+</html>
