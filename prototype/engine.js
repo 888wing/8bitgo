@@ -64,6 +64,15 @@ export function zoom(game, exhibitId) {
   return found;
 }
 
+// 放大鏡移到某一處才發現那個細節（桌面版用）；文字版用上面的 zoom，一次看整件證物。
+export function revealDetail(game, detailId) {
+  if (game.zoomed[detailId]) return false;
+  const known = Object.values(EXHIBITS).some((ex) => ex.details.some((d) => d.id === detailId && d.zoom));
+  if (!known) return false;
+  game.zoomed[detailId] = true;
+  return true;
+}
+
 export function visibleDetails(game, exhibitId) {
   return EXHIBITS[exhibitId].details.filter((d) => !d.zoom || game.zoomed[d.id]);
 }

@@ -29,10 +29,14 @@
 | [03 質感](docs/03-feel.md) | 怎樣避免廉價感：介面、手感、演出、美術 |
 | [04 範例案件](docs/04-case.md) | 福安樓縱火案，按證人和說法的格式寫成 |
 | [05 製作](docs/05-production.md) | 原型、內容格式、技術、分期、未決定的事 |
+| [06 美術規範](docs/06-art.md) | 解像度、調色盤、字、版面、手感，以及不准做的事 |
 | [決策紀錄](docs/decisions.md) | 已經定下來的事和理由 |
 
 ## 狀態
 
-設計階段。第一、二天的純文字原型在 [prototype/](prototype/README.md)：執行 `node prototype/build.js`，再雙擊 `prototype/dist/index.html` 就可以玩。
+設計階段。原型在 [prototype/](prototype/README.md)：執行 `node prototype/build.js`，然後：
+
+- 雙擊 `prototype/dist/index.html`：第一、二天的純文字原型，試核心規則。
+- 雙擊 `prototype/dist/desk.html`：第一天的法庭桌面，像素畫面的手感切片（要連網）。
 
 舊專案（8bitgo Phaser／Capacitor starter）可以從歷史 `53ab3d3` 取回。

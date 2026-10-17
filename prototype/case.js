@@ -74,34 +74,35 @@ export const EXHIBITS = {
 };
 
 // 理由：說法 × 證物（或另一個說法）。card 是在評議室出示時推出去的那件東西。
+// note 是完整的想法；jot 是寫在筆記本頁邊的短句（桌面版，一行寫得下）。
 export const REASONS = {
   R1: {
     card: 'P4', claims: ['c3'], effect: 'doubt', pairs: [['c3', 'P4b'], ['c1', 'P4b']],
-    note: '佢話喺地下點過張紙，督察話起火點喺三樓？',
+    note: '佢話喺地下點過張紙，督察話起火點喺三樓？', jot: '佢只係喺地下點過紙？',
   },
   R2: {
     card: 'P2', claims: ['c2'], effect: 'doubt', pairs: [['c2', 'P2b']],
-    note: '火石磨平、棉芯乾：呢個火機，點著火？',
+    note: '火石磨平、棉芯乾：呢個火機，點著火？', jot: '火石平、棉芯乾，點著？',
   },
   RB: {
     card: 'P1', claims: ['c1'], effect: 'doubt', from: 'fung',
-    note: '馮 Sir：燒痕由下面燒上嚟，起火點未必喺三樓。',
+    note: '馮 Sir：燒痕由下面燒上嚟，起火點未必喺三樓。', jot: '燒痕由下面燒上嚟',
   },
   R3: {
     card: 'D1', claims: ['g2'], effect: 'doubt', pairs: [['g2', 'D1b'], ['g2', 'D1a']],
-    note: '成幢樓冇電，點睇電視？',
+    note: '成幢樓冇電，點睇電視？', jot: '冇電，點睇電視？',
   },
   R4: {
     card: 'D1', claims: ['g3'], effect: 'doubt', pairs: [['g3', 'D1b'], ['g3', 'D1a']],
-    note: '冇電，樓梯點會有燈？',
+    note: '冇電，樓梯點會有燈？', jot: '冇電，點會有燈？',
   },
   R5: {
     card: 'D1', claims: ['k1'], effect: 'doubt', pairs: [['k1', 'D1b'], ['k1', 'D1a']],
-    note: '冇電又天凍，買火水可能係攞嚟取暖、點燈。',
+    note: '冇電又天凍，買火水可能係攞嚟取暖、點燈。', jot: '冇電天凍，火水取暖？',
   },
   R6: {
     card: 'P3', claims: ['w1', 'k1'], effect: 'trust', pairs: [['w1', 'k1'], ['w1', 'P3a']], from: 'wong',
-    note: '一個禮拜前講要燒，燒之前一日就去買火水。',
+    note: '一個禮拜前講要燒，燒之前一日就去買火水。', jot: '講完要燒，就買火水',
   },
 };
 
@@ -109,7 +110,7 @@ export const CARD_NAMES = { P4: '口供頁底的手寫字', P2: '打火機', P1:
 
 // 對得上，但你看不懂：視角的限制。
 export const THOUGHTS = [
-  { pair: ['c1', 'P1b'], text: '地下門腳都有黑痕……不過你唔識睇燒痕。' },
+  { pair: ['c1', 'P1b'], text: '地下門腳都有黑痕……不過你唔識睇燒痕。', jot: '地下門腳都有黑痕？' },
 ];
 
 const every = (value) => Object.fromEntries(Object.keys(CLAIMS).map((id) => [id, value]));
@@ -272,7 +273,7 @@ export const CALLOUT = {
 export const RULEBOOK = {
   r1: '只可以根據法庭上的證據作判斷；不可自行調查、不可閱讀案件報道、不可與外人討論案件。',
   r2: '控方須證明被告有罪，至毫無合理疑點。有合理疑點，須判無罪。',
-  r3: '《司法效率條例》：每日休庭後暫議表決（有罪／無罪／未決）。任何一方達五票，即日裁決，審訊即時結束。',
+  r3: '《司法效率條例》：每日休庭後暫議表決（有罪、無罪或未決）。任何一方達五票，即日裁決，審訊即時結束。',
   r4: '法官指示忽略的說話，須在筆記上蓋「不予採納」；評議時不得引用。',
   r5: '傳聞證據（轉述別人的說話）不可作為事實依據。',
 };

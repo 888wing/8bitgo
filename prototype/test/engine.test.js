@@ -186,6 +186,18 @@ test('指錯了也會用掉一次發言', () => {
   assert.equal(game.room.actions, 2);
 });
 
+test('放大鏡逐處發現細節，發現之後才可以拿來對照', () => {
+  const game = E.createGame();
+  hearDay(game, 1);
+  assert.ok(!E.visibleDetails(game, 'P4').some((d) => d.id === 'P4b'));
+  assert.equal(E.revealDetail(game, 'P4b'), true);
+  assert.equal(E.revealDetail(game, 'P4b'), false);
+  assert.equal(E.revealDetail(game, 'P4a'), false);
+  assert.ok(E.visibleDetails(game, 'P4').some((d) => d.id === 'P4b'));
+  assert.equal(E.canZoom(game, 'P4'), false);
+  assert.equal(E.crossCheck(game, 'c3', 'P4b').kind, 'reason');
+});
+
 test('改印章會留下舊的印章', () => {
   const game = E.createGame();
   hearDay(game, 1);

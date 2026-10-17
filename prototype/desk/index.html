@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>第七席陪審桌</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@700&family=Noto+Sans+TC:wght@500;700&display=swap">
+<style>
+/* 只有一種主題：法庭的燈光是固定的，深色背景讓像素畫做主角。 */
+:root {
+  color-scheme: dark;
+  --bg: #0e1110;
+  --text: #a3aea2;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.5 system-ui, -apple-system, "PingFang TC", "Microsoft JhengHei", sans-serif;
+  /* 左右留 16px；上下只留 8px，手機橫放時高度最緊。 */
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: max(8px, env(safe-area-inset-top, 0px)) max(8px, env(safe-area-inset-bottom, 0px));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  overflow: hidden;
+}
+#game { display: grid; place-items: center; max-width: 100%; text-align: center; }
+#game canvas { display: block; image-rendering: pixelated; touch-action: none; }
+#rotate { margin: 0; text-align: center; }
+[hidden] { display: none !important; }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.90.0/phaser.min.js"></script>
+</head>
+<body>
+<p id="rotate" hidden>把手機橫放，畫面會大一點。</p>
+<div id="game" role="application" aria-label="第七席陪審桌：第一天的法庭。用滑鼠或手指拖動證物、放大鏡和印章；空白鍵聽下一句。"></div>
+<script type="module" src="main.js"></script>
+</body>
+</html>
