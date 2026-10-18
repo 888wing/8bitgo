@@ -1,3 +1,5 @@
 node_modules/
 prototype/dist/
 .DS_Store
+build/
+game/.godot/

@@ -1,0 +1,36 @@
+; Engine configuration file.
+; 第七席的 Godot 版。畫面固定 480×270，由 main.gd 按螢幕實際像素放大。
+
+config_version=5
+
+[application]
+
+config/name="第七席"
+config/description="法庭版 Papers, Please：你是七人陪審團的第七席。"
+run/main_scene="res://scenes/main.tscn"
+config/use_custom_user_dir=true
+config/custom_user_dir_name="seventh-seat"
+config/features=PackedStringArray("4.7", "GL Compatibility")
+boot_splash/show_image=false
+boot_splash/bg_color=Color(0.054902, 0.0666667, 0.0627451, 1)
+
+[display]
+
+window/size/viewport_width=960
+window/size/viewport_height=540
+window/stretch/mode="disabled"
+window/dpi/allow_hidpi=true
+window/handheld/orientation=0
+
+[input_devices]
+
+pointing/emulate_mouse_from_touch=true
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/canvas_textures/default_texture_filter=0
+2d/snap/snap_2d_transforms_to_pixel=true
+2d/snap/snap_2d_vertices_to_pixel=true
+environment/defaults/default_clear_color=Color(0.054902, 0.0666667, 0.0627451, 1)
