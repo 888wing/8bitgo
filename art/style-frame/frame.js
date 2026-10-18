@@ -1,9 +1,10 @@
 // 風格定稿圖：一張完整上色的 480×270 法庭桌面。
 // 版面、調色盤和字都照 docs/06-art.md；每一部分都是將來換掉佔位美術時的樣板。
-// 畫的一刻：鄭督察答辯方「……我唔記得。」，你拿起「疑」字印章，準備蓋在他的口供上。
+// 畫的一刻：鄭督察答辯方「……我唔記得。」；放大鏡停在口供頁底的手寫字上，你拿起「疑」字印章，準備蓋在他的口供上。
 import * as P from '../../prototype/desk/pixels.js';
 import * as L from '../../prototype/desk/layout.js';
 import { PAL as C } from '../../prototype/desk/art.js';
+import { EVIDENCE } from './evidence.js';
 
 // —— 工具 ——
 
@@ -759,147 +760,20 @@ function imprint(kind, seed) {
 
 // —— 證物 ——
 
-function painter(w, h, s) {
-  const { c, ctx } = P.canvas(w * s, h * s);
-  const dot = (x, y, color) => P.rect(ctx, x * s, y * s, s, s, color);
-  return {
-    c, ctx, s,
-    rect: (x, y, ww, hh, color) => P.rect(ctx, x * s, y * s, ww * s, hh * s, color),
-    px: dot,
-    line: (x0, y0, x1, y1, color) => P.linePoints(x0, y0, x1, y1).forEach(([x, y]) => dot(x, y, color)),
-    dither(x, y, ww, hh, color, phase = 0) {
-      for (let j = 0; j < hh; j += 1) for (let i = 0; i < ww; i += 1) if ((i + j + phase) % 2 === 0) dot(x + i, y + j, color);
-    },
-    text(str, x, y, opts, zoomOpts = {}) {
-      const o = s > 1 ? { ...opts, ...zoomOpts } : opts;
-      ctx.drawImage(P.text(str, { ...o, size: o.size * s, width: (o.width ?? 0) * s, lineHeight: (o.lineHeight ?? 0) * s }).canvas, x * s, y * s);
-    },
-  };
-}
-
-// 樓梯相片：黑白，三樓的牆燒得最黑；右下角是地下寫字樓的門。
-function photo() {
-  const p = painter(104, 72, 1);
-  p.rect(0, 0, 104, 72, C.white);
-  p.rect(0, 70, 104, 2, C.paperShade);
-  p.rect(102, 0, 2, 72, C.paperShade);
-  p.rect(4, 4, 96, 60, C.wallDark);
-  // 牆和天花：越近起火的地方越黑
-  p.rect(4, 4, 60, 30, C.photo);
-  p.rect(4, 4, 44, 22, C.black);
-  p.dither(48, 4, 16, 22, C.black);
-  p.dither(4, 26, 44, 8, C.black, 1);
-  p.dither(64, 4, 16, 30, C.photo);
-  // 樓梯一級級向右下
-  for (let i = 0; i < 8; i += 1) {
-    const sx = 4 + i * 9;
-    const sy = 30 + i * 4;
-    p.rect(sx, sy, 12, 2, C.grey);
-    p.rect(sx, sy + 2, 12, 2, C.photo);
-  }
-  // 扶手
-  p.line(4, 40, 76, 16, C.metal);
-  p.line(4, 41, 76, 17, C.photo);
-  for (let i = 10; i < 76; i += 12) p.line(i, 38 - Math.floor((i - 4) / 3), i, 46 - Math.floor((i - 4) / 3) + 6, C.grey);
-  // 地下寫字樓的門，門腳一道黑痕
-  p.rect(80, 30, 16, 32, C.grey);
-  p.rect(82, 32, 12, 30, C.wall);
-  p.rect(82, 32, 12, 2, C.metal);
-  p.px(92, 46, C.metal);
-  p.rect(82, 58, 12, 4, C.photo);
-  p.dither(82, 55, 12, 3, C.photo);
-  p.rect(4, 62, 96, 2, C.black);
-  p.text('P1', 88, 63, { size: 8, color: C.grey, threshold: 90 });
-  return p.c;
-}
-
-// 證物袋裡的火水打火機：透明膠袋壓在綠皮革上，看起來是淺灰綠，有摺痕和反光。s = 2 是放大鏡看到的樣子。
-function lighterBag(s) {
-  const p = painter(84, 62, s);
-  p.rect(0, 9, 84, 53, C.wallLight);
-  // 反光帶和摺痕
-  for (let i = 0; i < 3; i += 1) p.line(4 + i, 40, 26 + i, 12, C.paperShade);
-  p.line(7, 40, 29, 12, C.white);
-  for (let i = 0; i < 2; i += 1) p.line(56 + i, 60, 80 + i, 30, C.paperShade);
-  p.line(58, 60, 82, 30, C.white);
-  p.line(2, 30, 30, 58, C.wall);
-  p.line(60, 12, 82, 24, C.wall);
-  // 熱封的袋邊
-  p.rect(0, 9, 84, 1, C.white);
-  p.rect(0, 9, 1, 53, C.white);
-  p.rect(83, 9, 1, 53, C.wall);
-  p.rect(0, 61, 84, 1, C.wall);
-  for (let x = 3; x < 81; x += 3) p.rect(x, 58, 2, 1, C.paperShade);
-  // 封口條
-  p.rect(0, 0, 84, 9, C.suit);
-  p.rect(0, 0, 84, 1, C.wallDark);
-  p.rect(0, 8, 84, 1, C.ink);
-  p.text('證物 P2', 4, 0, { size: 8, weight: 700, color: C.white, threshold: 90 });
-  // 標籤
-  p.rect(5, 45, 36, 12, C.white);
-  p.rect(5, 56, 36, 1, C.paperShade);
-  p.text('三樓樓梯', 7, 47, { size: 8, color: C.ink, threshold: 90 });
-  // 打火機：防風罩、火石輪、機身；黑邊把它和膠袋分開
-  p.rect(36, 12, 16, 10, C.black);
-  p.rect(37, 13, 14, 8, C.metal);
-  p.rect(37, 13, 14, 1, C.white);
-  for (let x = 39; x < 50; x += 3) p.rect(x, 15, 1, 3, C.wallDark);
-  p.rect(40, 8, 7, 5, C.black);
-  p.rect(41, 9, 5, 4, C.grey);
-  p.rect(42, 10, 3, 2, C.wallDark);
-  p.rect(34, 21, 20, 30, C.black);
-  p.rect(35, 22, 18, 28, C.metal);
-  p.rect(35, 22, 3, 28, C.white);
-  p.rect(48, 22, 5, 28, C.grey);
-  p.rect(51, 22, 2, 28, C.wallDark);
-  p.rect(35, 27, 18, 1, C.wallDark);
-  p.dither(40, 34, 7, 7, C.grey);
-  if (s > 1) {
-    // 放大才看得到：火石輪磨得光滑、棉芯又乾又散、機身刻的字
-    P.rect(p.ctx, 82, 18, 10, 8, C.metal);
-    P.rect(p.ctx, 82, 18, 10, 1, C.white);
-    P.rect(p.ctx, 82, 25, 10, 1, C.grey);
-    P.rect(p.ctx, 76, 24, 3, 10, C.paperShade);
-    P.rect(p.ctx, 79, 24, 1, 10, C.skinShade);
-    for (const [x, y] of [[75, 22], [79, 21], [77, 20], [74, 24], [80, 23], [73, 22]]) P.px(p.ctx, x, y, C.paperShade);
-    P.rect(p.ctx, 80, 68, 14, 14, C.metal);
-    p.ctx.drawImage(P.text('樂', { size: 13, weight: 700, color: C.wallDark, threshold: 110 }).canvas, 80, 68);
-  }
-  return p.c;
-}
-
 function drawEvidence(ctx) {
-  const ph = photo();
-  P.dither(ctx, 331 + 1, 176 + 1, 104, 72, C.black);
-  ctx.drawImage(ph, 331, 176);
-  ctx.drawImage(lighterBag(1), 336, 137);
-  // 托盤裡還有口供
-  const ix = L.SLOTS.x + 2 * L.SLOTS.step;
-  P.dither(ctx, ix + 1, L.SLOTS.y + 1, 24, 18, C.black);
-  sprite(ctx, ix, L.SLOTS.y, [
-    '...KKKKKKKKKKKKKKKKKK...',
-    '...KWWWWWWWWWWWWWWWWK...',
-    '...KWiiiiiiiWWWWWWWWK...',
-    '...KWWWWWWWWWWWWWWWWK...',
-    '...KWgggggggggggggWWK...',
-    '...KWggggggggggggWWWK...',
-    '...KWgggggggggggggWWK...',
-    '...KWWWWWWWWWWWWWWWWK...',
-    '...KWiiiiiiiiiiiiWWWK...',
-    '...KWiiiiiiiiiiWWWWWK...',
-    '...KWWWWWWWWWWWWWWWWK...',
-    '...KWggggggWWWWWWWWWK...',
-    '...KWWWWWWWWWWWWWWWWK...',
-    '...KWWWWWWWWWWWWWWWWK...',
-    '...KWttttttttttWWWWWK...',
-    '...KWWWWWWWWWWWWWWWWK...',
-    '...KsssssssssssssssssK..',
-    '...KKKKKKKKKKKKKKKKKK...',
-  ], { K: C.black, W: C.paper, i: C.ink, g: C.grey, t: C.trust, s: C.paperShade });
+  // 口供攤在皮革上；相片和打火機留在托盤
+  const doc = EVIDENCE.P4;
+  P.dither(ctx, 334, 135, doc.w, doc.h, C.black);
+  ctx.drawImage(doc.draw(1), 332, 133);
+  for (const [i, id] of [[0, 'P1'], [1, 'P2']]) {
+    const x = L.SLOTS.x + i * L.SLOTS.step;
+    P.dither(ctx, x + 1, L.SLOTS.y + 1, 24, 18, C.black);
+    ctx.drawImage(EVIDENCE[id].icon(), x, L.SLOTS.y);
+  }
 }
 
 // 放大鏡：鏡片裡是證物的兩倍圖。光從左上方來，銅框左上亮、右下暗。
-function drawLoupe(ctx, cx, cy, doc, dx, dy) {
+function drawLoupe(ctx, cx, cy, docId, dx, dy) {
   // 手柄和陰影
   P.dither(ctx, cx + 14, cy + 16, 26, 26, C.black);
   for (let i = 0; i < 26; i += 1) {
@@ -913,7 +787,7 @@ function drawLoupe(ctx, cx, cy, doc, dx, dy) {
   P.rect(ctx, cx + 38, cy + 38, 4, 3, C.woodDark);
   // 鏡片
   const r = L.LENS_R;
-  const zoom = lighterBag(2);
+  const zoom = EVIDENCE[docId].draw(2);
   const lens = P.canvas(r * 2 + 1, r * 2 + 1);
   lens.ctx.fillStyle = C.leather;
   lens.ctx.fillRect(0, 0, r * 2 + 1, r * 2 + 1);
@@ -1026,7 +900,8 @@ export function drawFrame(canvas) {
   drawTray(ctx);
   drawNotebook(ctx);
   drawEvidence(ctx);
-  drawLoupe(ctx, 379, 150, 'P2', 336, 137);
+  // 放大鏡停在口供頁底的手寫字上：「地下」兩個字放大了
+  drawLoupe(ctx, 376, 240, 'P4', 332, 133);
   drawRack(ctx, L.RACK.shownX, L.RACK.y);
   // 拿在手上的「疑」字印章：影子離紙遠一點，底部對準第三條說法的頁邊
   const held = stamp('doubt');
