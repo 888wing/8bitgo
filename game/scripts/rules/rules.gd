@@ -72,6 +72,7 @@ static func create_game(opts: Dictionary = {}) -> Dictionary:
 #   exposed：陪審員 id → 被你揭發的那一天（下一次 start_day 才解除職務）
 #   flags：夜晚的選擇留下的記號：jade、press、bangle、bribe
 #   slips：str(天) → 當天用了哪一張提問紙條（每天一張）
+#   said：評議室的插話 id → 說出口的那一天。room.fired 每天重來，這裡跨日記住（條件 said:）
 #   final：今天的表決沒有「未決」
 #   session：0 是一般的評議室；1、2 是最後一天的延長評議
 #   out：你因此離開審判的原因："dismissed"、"bangle"、"mistrial"，沒有就是 null
@@ -83,6 +84,7 @@ static func _new_ext() -> Dictionary:
 		"exposed": {},
 		"flags": {},
 		"slips": {},
+		"said": {},
 		"final": false,
 		"session": 0,
 		"out": null,
@@ -619,6 +621,7 @@ static func _interjections(game: Dictionary, act: Dictionary) -> Array:
 		if _truthy(game.room.fired.get(it["id"])) or not _trigger(it["when"], game, act):
 			continue
 		game.room.fired[it["id"]] = true
+		game.ext.said[it["id"]] = int(game.day)
 		events.append_array(_say(game, it))
 		if it.has("reply"):
 			var r: Dictionary = it["reply"]
@@ -727,7 +730,7 @@ static func call_out(game: Dictionary, statement_id: String) -> Array:
 		var effect: Variant = _statement_def(game, st["id"]).get("effect")
 		if effect != null and effect.get("expose") != null:
 			game.ext.exposed[effect["expose"]] = game.day
-		for b in callout[st["id"]]:
+		for b in _filter_beats(game, callout[st["id"]]):
 			events.append(_line(b["who"], b["text"]))
 		events.append({"type": "refresh"})
 	else:
@@ -839,7 +842,7 @@ static func doubted_claims(game: Dictionary) -> Array:
 # 條件是字串，或字串的陣列（全部成立才算）。寫法見 prototype/case.js 的說明：
 #   heard:說法　zoomed:細節　reason:理由　flag:名字　flag:名字=值1|值2
 #   stamp:說法=trust|doubt（who 的有效印章，who 預設是你）　verdict:G|NG|A|none（ext.verdict，沒有裁決是 none）
-#   voted:G（你最後一票）　day:1|2|3　out:離開審判的原因　dismissed:陪審員
+#   voted:G（你最後一票）　day:1|2|3　out:離開審判的原因　dismissed:陪審員　said:評議室的插話（這一局說過）
 #   jurors:說法=doubt>=3（還在評議室的陪審員，有多少個這樣看）　tally:G>=4（最近一次表決的票數）
 #   not:條件　any:條件;條件;條件
 # ctx 可以帶 {"day": 天} 蓋過 game.day（結局用）。不認得的條件：報錯，當作不成立。
@@ -903,6 +906,8 @@ static func cond(game: Dictionary, expr: Variant, who := "you", ctx := {}) -> bo
 			return ext.out != null and str(ext.out) == arg
 		"dismissed":
 			return ext.dismissed.has(arg)
+		"said":
+			return ext.said.has(arg)
 		"jurors":
 			var ge_at := arg.find(">=")
 			var eq_at := arg.find("=")

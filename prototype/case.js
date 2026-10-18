@@ -395,7 +395,7 @@ export const ROOMS = {
     ],
     interjections: [
       {
-        id: 'd4-slip', when: 'slip', juror: 'law', text: '個看更企喺樓梯口，佢咁老實，唔會講大話。',
+        id: 'd4-slip', when: 'slip', juror: 'law', text: '個看更企喺樓梯口……昇平請佢返嚟睇住幢樓，佢咁老實，唔會講大話。',
         improper: true, effect: { override: ['g1', 'g3'], value: 'trust', jurors: ['leung', 'so', 'wong'], expose: 'law' },
       },
     ],
@@ -433,13 +433,16 @@ export const CALLOUT = {
     { who: 'leung', text: '羅生，庭上冇人講過個看更喺邊度做嘢。你點知？' },
     { who: 'law', text: '……我估嘅。' },
   ],
+  // 「上次」「又」只在之前真的失言過才說（said:）。
   'd3-slip': [
-    { who: 'leung', text: '羅生，庭上冇人講過個看更喺邊度做嘢。你上次都係咁講。' },
+    { who: 'leung', text: '羅生，庭上冇人講過個看更喺邊度做嘢。你上次都係咁講。', when: 'said:d2-slip' },
+    { who: 'leung', text: '羅生，庭上冇人講過個看更喺邊度做嘢。你點知？', when: 'not:said:d2-slip' },
     { who: 'law', text: '……' },
     { who: 'leung', text: '我會寫張紙條，話俾法官知。' },
   ],
   'd4-slip': [
-    { who: 'leung', text: '羅生，你又係咁。你點識個看更？' },
+    { who: 'leung', text: '羅生，你又係咁。庭上冇人講過邊個請個看更。你點識佢？', when: 'any:said:d2-slip;said:d3-slip' },
+    { who: 'leung', text: '羅生，庭上冇人講過邊個請個看更。你點識佢？', when: 'not:any:said:d2-slip;said:d3-slip' },
     { who: 'law', text: '……我冇講過識佢。' },
     { who: 'leung', text: '我會寫張紙條，話俾法官知。' },
   ],
@@ -656,7 +659,7 @@ export const NIGHT = {
   ],
   // 初稿
   2: [
-    { who: '旁白', text: '夜晚，信昌押。櫃台上壓著一張租單：後天到期。' },
+    { who: '旁白', text: '夜晚，信昌押。櫃台上壓著一張租單：明天到期。' },
     { who: '母親', text: '業主又寄信嚟。你仲要去幾多日？' },
   ],
   3: [
@@ -674,7 +677,7 @@ export const NIGHT = {
 // 條件（when、needs）是字串或字串的陣列，全部成立才算：
 //   heard:說法　zoomed:細節　reason:理由　flag:名字 或 flag:名字=值1|值2　stamp:說法=trust|doubt（你的印章）
 //   verdict:G|NG|A|none　voted:G（你最後一票）　day:1|2|3　out:離開審判的原因　dismissed:陪審員
-//   jurors:說法=doubt>=3（多少個陪審員這樣看）　not:條件　any:條件;條件
+//   jurors:說法=doubt>=3（多少個陪審員這樣看）　said:評議室的插話（這一局說過）　not:條件　any:條件;條件
 
 // 夜晚的一件事：先播 intro，再讓你選。out 是你因此離開審判（結局在第二天早上揭曉）。
 export const NIGHT_EVENTS = {

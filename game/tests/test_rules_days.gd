@@ -30,7 +30,8 @@ func _texts(beats: Array) -> Array:
 
 func _has_text(beats: Array, needle: String) -> bool:
 	for b in beats:
-		if str(b["text"]).contains(needle):
+		# 指出違規的回傳還有 {"type": "refresh"} 這類沒有字的事件
+		if str(b.get("text", "")).contains(needle):
 			return true
 	return false
 
@@ -46,7 +47,7 @@ func test_ext_created() -> void:
 	about("新增的狀態全放在 game.ext，一開始都是空的")
 	var game := Rules.create_game()
 	eq(game.ext, {
-		"struck_exhibits": {}, "dismissed": {}, "exposed": {}, "flags": {}, "slips": {},
+		"struck_exhibits": {}, "dismissed": {}, "exposed": {}, "flags": {}, "slips": {}, "said": {},
 		"final": false, "session": 0, "out": null, "verdict": null,
 	})
 
@@ -394,6 +395,59 @@ func test_dismissed_only_after_exposure() -> void:
 	eq(day4.ext.exposed, {"law": 4})
 	Rules.start_day(day4, 5)
 	eq(day4.ext.dismissed, {"law": 5})
+
+
+func test_callout_remembers_slips() -> void:
+	about("主席只在羅生之前真的失言過，才說「上次」「又係咁」")
+	# 第二天一開始就提請表決：羅生沒有失言
+	var quiet := _game_on(2)
+	Rules.start_room(quiet)
+	Rules.call_vote(quiet)
+	eq(quiet.ext.said, {})
+	Rules.hear_day(quiet, 3)
+	Rules.start_room(quiet)
+	Rules.ask(quiet, "lam")
+	Rules.ask(quiet, "so")
+	eq(quiet.ext.said, {"d3-slip": 3})
+	var beats := Rules.call_out(quiet, "d3-slip")
+	check(not _has_text(beats, "上次"), "第二天沒有失言，不可以說上次")
+	check(_has_text(beats, "你點知"))
+	for b in beats:
+		check(not b.has("when"), "when 要拿掉")
+	# 第二天失言了：第三天說「上次」
+	var slipped := _game_on(2)
+	Rules.start_room(slipped)
+	Rules.ask(slipped, "lam")
+	Rules.ask(slipped, "so")
+	eq(slipped.ext.said, {"d2-slip": 2})
+	Rules.hear_day(slipped, 3)
+	Rules.start_room(slipped)
+	Rules.ask(slipped, "lam")
+	Rules.ask(slipped, "so")
+	beats = Rules.call_out(slipped, "d3-slip")
+	check(_has_text(beats, "上次"), "第二天失言過")
+	check(not _has_text(beats, "你點知"), "兩句只說一句")
+	# 第四天：之前沒有失言就沒有「又」
+	var day4 := _game_on(4)
+	Rules.start_room(day4)
+	Rules.ask(day4, "lam")
+	Rules.ask(day4, "so")
+	beats = Rules.call_out(day4, "d4-slip")
+	check(not _has_text(beats, "又係咁"))
+	check(_has_text(beats, "你點識佢"))
+	# 第三天失言了但沒有人指出：第四天說「又係咁」
+	var again := _game_on(3)
+	Rules.start_room(again)
+	Rules.ask(again, "lam")
+	Rules.ask(again, "so")
+	Rules.hear_day(again, 4)
+	Rules.start_room(again)
+	Rules.ask(again, "lam")
+	Rules.ask(again, "so")
+	eq(again.ext.said, {"d3-slip": 3, "d4-slip": 4})
+	beats = Rules.call_out(again, "d4-slip")
+	check(_has_text(beats, "又係咁"))
+	check(not _has_text(beats, "羅生，庭上冇人"), "兩句只說一句")
 
 
 func test_extension_sessions() -> void:
