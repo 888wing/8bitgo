@@ -88,6 +88,7 @@ var rack_ready := false
 var stamp_target: Variant = null
 var stamp_busy := {"trust": false, "doubt": false, "struck": false}
 var typing: Variant = null
+var dialogue_text := "" # 對白框現在畫著的字（測試用：無頭模式讀不回 update 過的圖）
 var waiting := false
 var voice: Dictionary
 var writing: Array = []
@@ -201,6 +202,7 @@ func draw_name(name: String) -> void:
 
 
 func draw_dialogue(text: String, color: Color) -> void:
+	dialogue_text = text
 	var img := Draw.canvas(132, 66)
 	if text != "":
 		Draw.blit(img, Text.render(text, "dialogue", color, 124, 16).image, 0, 0)
@@ -270,7 +272,9 @@ func speak(beat: Dictionary) -> void:
 
 func advance() -> void:
 	if typing != null:
+		# 跳過打字：即刻畫出整句。tick_typing 只在字數變了才重畫，這裡不畫就會停在打到一半的字
 		typing.shown = float(typing.text.length())
+		draw_dialogue(typing.text, voice.color)
 		return
 	if waiting:
 		waiting = false

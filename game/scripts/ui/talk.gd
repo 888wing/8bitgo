@@ -56,7 +56,9 @@ func speak(beat: Dictionary) -> void:
 
 func advance() -> void:
 	if typing != null:
+		# 跳過打字：即刻畫出整句。_process 只在字數變了才重畫，這裡不畫就會停在打到一半的字
 		typing.shown = float(typing.text.length())
+		_draw_box(voice.name, typing.text, voice.color)
 		return
 	if waiting:
 		waiting = false
