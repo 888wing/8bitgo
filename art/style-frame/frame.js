@@ -220,26 +220,26 @@ function drawClock(ctx, cx, cy) {
   P.px(ctx, cx - 5, cy - 5, C.white);
 }
 
-// 法官席上方的皇家徽章：盾、冠、兩隻扶盾獸、絲帶。
+// 法官席上方的霧港法院徽章：圓章裡一座燈塔和海浪，兩邊橄欖枝，下面一條絲帶。
+// 故事在虛構的霧港，不用任何真實的國徽或皇家徽章。
 function drawArms(ctx, x, y) {
   sprite(ctx, x, y, [
-    '.........YYYYY.........',
-    '........YbYbYbY........',
-    '........YYYYYYY........',
-    '.WW.....bbbbbbb.....bb.',
-    'WWWw...bYYYbrrrb...bYYb',
-    '.WWWw..bYYYbrrrb..bYYb.',
-    '..WWww.bbbbbbbbb.bYYYb.',
-    '..WwWw.bwwwbYYYb.bYbYb.',
-    '..W.Ww.bwwwbYYYb..YbYb.',
-    '..W..w.bwwwbYYYb..Y..Y.',
-    '..W..w..bwwbYYb...Y..Y.',
     '.........bbbbb.........',
-    '.bbYYYYYYYYYYYYYYYYYbb.',
-    'bYYbbbbbbbbbbbbbbbbYYb.',
-    '.bb.................bb.',
-  ], { Y: C.brass, b: C.brassDark, r: C.judgeRed, W: C.white, w: C.paperShade });
-  hline(ctx, x + 2, y + 12, 18, C.brassLight);
+    '.......bbYYYYYbb.......',
+    '......bYYYYWYYYYb......',
+    '.L...bYYYYWWWYYYYb...L.',
+    'LL..bYYYYYWkWYYYYYb..LL',
+    '.LL.bYYYYYWWWYYYYYb.LL.',
+    '..L.bYYYYYwWwYYYYYb.L..',
+    '.LL.bYYYYYwWwYYYYYb.LL.',
+    '..LLbYYYYwwWwwYYYYbLL..',
+    '...LbbYbbbbbbbbbYbbL...',
+    '....LbYYbYYbYYbYYbL....',
+    '.....bbYYYYYYYYYbb.....',
+    '.......bbbbbbbbb.......',
+    '.bbLLLLLLLLLLLLLLLLLbb.',
+    'bLLbbbbbbbbbbbbbbbbbLLb',
+  ], { Y: C.brass, b: C.brassDark, L: C.brassLight, W: C.white, w: C.paperShade, k: C.ink });
 }
 
 // 小人：法官。半月形眼鏡、假髮兩邊捲起、紅袍、白色領帶。

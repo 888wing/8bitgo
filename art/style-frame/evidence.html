@@ -21,7 +21,7 @@ import { PAL as C } from '../../prototype/desk/art.js';
 import { EVIDENCE } from './evidence.js';
 
 // 證物樣板：每件證物上面是原大（放在桌上的樣子），下面是放大鏡看到的兩倍。
-const text = '皇家香港警察證物P2福安樓三樓3/11/87樓梯現場相片P1警署口供紙本人何嘉樂，二十二歲，外賣員，住福安樓四樓。本人承認於福安樓放火。以上內容正確。簽署：我只係喺地下點過張紙證物袋裡的打火機原大放大鏡下（兩倍）';
+const text = '霧港警察證物P2福安樓三樓3/11/87樓梯現場相片P1警署口供紙本人何嘉樂，二十二歲，外賣員，住福安樓四樓。本人承認於福安樓放火。以上內容正確。簽署：我只係喺地下點過張紙證物袋裡的打火機原大放大鏡下（兩倍）';
 await Promise.allSettled(['400 12px "Noto Sans TC"', '500 12px "Noto Sans TC"', '700 12px "Noto Sans TC"', '700 12px "LXGW WenKai TC"'].map((f) => document.fonts.load(f, text)));
 
 const canvas = document.getElementById('frame');

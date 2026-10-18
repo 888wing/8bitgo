@@ -168,13 +168,13 @@ export function bagP2(s) {
   p.hline(2, 58, 80, C.paperShade);
   p.hline(2, 59, 80, C.white);
   p.frame(0, 9, 84, 53, C.wall);
-  // 封口條：印著「證物」，左邊有個吊孔
+  // 封口條：印著「霧港警察」，左邊有個吊孔
   p.rect(0, 0, 84, 9, C.suit);
   p.hline(0, 0, 84, C.wallDark);
   p.hline(0, 8, 84, C.ink);
   p.rect(3, 3, 3, 3, C.black);
   p.frame(2, 2, 5, 5, C.metal);
-  p.text('皇家香港警察', 10, 0, { size: 8, weight: 500, color: C.white, threshold: 90 });
+  p.text('霧港警察', 10, 0, { size: 8, weight: 500, color: C.white, threshold: 90 });
   p.text('P2', 72, 0, { size: 8, weight: 700, color: C.brassLight, threshold: 90 });
 
   // 標籤：手寫的地點和日期
@@ -263,7 +263,7 @@ export function confessionP4(s) {
   p.hline(3, 3, 5, C.grey);
   // 印好的表格
   const small = { size: 8, color: C.wallDark, threshold: 90 };
-  p.text('皇家香港警察', 6, 3, small, { color: C.ink, threshold: 110 });
+  p.text('霧港警察', 6, 3, small, { color: C.ink, threshold: 110 });
   p.text('3/11/87', 58, 3, small, { color: C.ink, threshold: 110 });
   p.text('警署口供紙', 6, 12, { size: 12, weight: 400, color: C.ink, threshold: 120 });
   p.hline(6, 27, 80, C.ink);
