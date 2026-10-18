@@ -129,8 +129,9 @@ func test_glyphs() -> void:
 	for ch in "0123456789/":
 		chars[ch] = true
 	var ui: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/ui.json"))
-	# 大字只用在標題和完結頁的小標題
-	var only := {"title": ui.title, "heading": ui.end.title}
+	# 大字只用在標題和結局的名字
+	var endings: Array = JSON.parse_string(FileAccess.get_file_as_string("res://data/case.json")).ENDINGS
+	var only := {"title": ui.title, "heading": "".join(endings.map(func(e: Dictionary) -> String: return e.title))}
 	for style in STYLES:
 		var need: Array = Array(only[style].split("")) if only.has(style) else chars.keys()
 		var missing := need.filter(func(ch: String) -> bool: return not Text.has_glyph(style, ch))

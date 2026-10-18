@@ -24,7 +24,7 @@ func test_first_witness_fills_notebook() -> void:
 	var desk: Node2D = DeskScene.instantiate()
 	tree.root.add_child(desk)
 	await _frames(desk, 2)
-	desk.close_modal()
+	desk.play_day(1)
 	await _advance_until(desk, func() -> bool: return desk.trial.heard.size() >= 3 and desk.docs.size() >= 3)
 	await _frames(desk, 120)
 	eq(desk.trial.heard, ["c1", "c2", "c3"], "聽到的說法")

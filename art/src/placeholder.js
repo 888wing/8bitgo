@@ -3,6 +3,7 @@
 import * as P from './pixels.js';
 import * as L from './layout.js';
 import { PAL } from './palette.js';
+import { EXHIBITS } from '../../prototype/case.js';
 
 const T = (str, opts) => P.text(str, opts).canvas;
 
@@ -74,18 +75,30 @@ function court() {
   return c;
 }
 
+// 證人台上的小人：衣服顏色、頭髮顏色，加一樣記認（領帶、徽章）。
+const WITNESS_LOOK = {
+  cheng: { cloth: PAL.suit, hair: PAL.hair, tie: true },
+  chung: { cloth: PAL.khaki, hair: PAL.grey, badge: true },
+  wat: { cloth: PAL.suit, hair: PAL.hair, tie: true },
+  chan: { cloth: PAL.khaki, hair: PAL.grey },
+  man: { cloth: PAL.paper, hair: PAL.hair },
+  au: { cloth: PAL.suit, hair: PAL.hair, badge: true },
+  lee: { cloth: PAL.wallDark, hair: PAL.hair },
+  ho: { cloth: PAL.paperShade, hair: PAL.hair },
+};
+
 function witness(kind) {
   const { c, ctx } = P.canvas(24, 22);
-  const cloth = kind === 'chung' ? PAL.khaki : PAL.suit;
-  P.rect(ctx, 4, 12, 16, 10, cloth);
-  if (kind === 'cheng') {
+  const look = WITNESS_LOOK[kind];
+  P.rect(ctx, 4, 12, 16, 10, look.cloth);
+  if (look.tie) {
     P.rect(ctx, 11, 12, 3, 6, PAL.white);
     P.rect(ctx, 12, 13, 1, 6, PAL.red);
-  } else {
+  } else if (look.badge) {
     P.px(ctx, 8, 15, PAL.brass);
   }
   P.ellipse(ctx, 12, 7, 4, 5, PAL.skin);
-  P.rect(ctx, 8, 2, 9, 3, kind === 'chung' ? PAL.grey : PAL.hair);
+  P.rect(ctx, 8, 2, 9, 3, look.hair);
   P.px(ctx, 10, 7, PAL.ink);
   P.px(ctx, 14, 7, PAL.ink);
   return c;
@@ -100,12 +113,19 @@ const PEOPLE = {
   cheng: { hair: 'short', clothes: 'suit', skin: PAL.skin, stern: true, moustache: true },
   usher: { hair: 'cap', clothes: 'uniform', skin: PAL.skin },
   chung: { hair: 'thin', clothes: 'khaki', skin: PAL.skin, droopy: true, sweat: true, old: true },
+  // greybox：第二至五天的證人
+  wat: { hair: 'short', clothes: 'suit', skin: PAL.skin },
+  chan: { hair: 'thin', clothes: 'khaki', skin: PAL.skin, old: true },
+  man: { hair: 'long', clothes: 'plain', cloth: PAL.paper, skin: PAL.skinLight },
+  au: { hair: 'cap', clothes: 'uniform', skin: PAL.skin, stern: true },
+  lee: { hair: 'short', clothes: 'plain', cloth: PAL.wallDark, skin: PAL.skin, young: true },
+  ho: { hair: 'short', clothes: 'plain', cloth: PAL.paperShade, skin: PAL.skin, young: true, droopy: true },
 };
 
 function portrait(spec, frame) {
   const { c, ctx } = P.canvas(56, 60);
   // 身體
-  const clothes = { suit: PAL.suit, robe: PAL.robe, judge: PAL.judgeRed, uniform: PAL.suit, khaki: PAL.khaki }[spec.clothes];
+  const clothes = { suit: PAL.suit, robe: PAL.robe, judge: PAL.judgeRed, uniform: PAL.suit, khaki: PAL.khaki, plain: spec.cloth }[spec.clothes];
   P.rect(ctx, 6, 46, 44, 14, clothes);
   P.rect(ctx, 4, 50, 48, 10, clothes);
   if (spec.clothes === 'suit') {
@@ -148,6 +168,10 @@ function portrait(spec, frame) {
     P.dither(ctx, 18, 12, 20, 5, PAL.grey);
     P.rect(ctx, 16, 17, 3, 9, PAL.grey);
     P.rect(ctx, 37, 17, 3, 9, PAL.grey);
+  } else if (spec.hair === 'long') {
+    P.ellipse(ctx, 28, 16, 13, 7, PAL.hair);
+    P.rect(ctx, 15, 16, 4, 22, PAL.hair);
+    P.rect(ctx, 37, 16, 4, 22, PAL.hair);
   } else if (spec.hair === 'cap') {
     P.rect(ctx, 15, 10, 26, 7, PAL.suit);
     P.rect(ctx, 13, 16, 30, 2, PAL.ink);
@@ -297,12 +321,15 @@ function rack() {
   return c;
 }
 
+const INK = { trust: PAL.trust, doubt: PAL.doubt, struck: PAL.red };
+const FACE = { trust: '信', doubt: '疑', struck: '刪' };
+
 function stamp(kind) {
   const { c, ctx } = P.canvas(26, 34);
-  const ink = kind === 'trust' ? PAL.trust : PAL.doubt;
+  const ink = INK[kind];
   P.ellipse(ctx, 13, 8, 9, 7, PAL.woodDark);
   P.ellipse(ctx, 13, 7, 8, 6, PAL.woodLight);
-  const t = P.text(kind === 'trust' ? '信' : '疑', { size: 12, weight: 700, color: PAL.white, threshold: 120 });
+  const t = P.text(FACE[kind], { size: 12, weight: 700, color: PAL.white, threshold: 120 });
   ctx.drawImage(t.canvas, 13 - Math.floor(t.width / 2), 1);
   P.rect(ctx, 10, 14, 6, 7, PAL.woodDark);
   P.rect(ctx, 2, 21, 22, 8, PAL.wood);
@@ -314,11 +341,16 @@ function stamp(kind) {
 // 蓋出來的印：邊框和字。遊戲每蓋一下，再隨機去掉一些點，所以每個印都不一樣。
 export function imprint(kind, dropout = 0) {
   const { c, ctx } = P.canvas(22, 22);
-  const ink = kind === 'trust' ? PAL.trust : PAL.doubt;
+  const ink = INK[kind];
   P.frame(ctx, 0, 0, 22, 22, ink);
   P.frame(ctx, 1, 1, 20, 20, ink);
-  const t = P.text(kind === 'trust' ? '信' : '疑', { size: 13, weight: 700, color: ink, threshold: 110 });
-  ctx.drawImage(t.canvas, 11 - Math.floor(t.width / 2), 3);
+  if (kind === 'struck') {
+    // 「不予採納」：四個字排成兩行
+    ctx.drawImage(P.text('不予\n採納', { size: 9, weight: 700, color: ink, lineHeight: 9, threshold: 100 }).canvas, 2, 2);
+  } else {
+    const t = P.text(FACE[kind], { size: 13, weight: 700, color: ink, threshold: 110 });
+    ctx.drawImage(t.canvas, 11 - Math.floor(t.width / 2), 3);
+  }
   if (dropout) {
     const img = ctx.getImageData(0, 0, 22, 22);
     for (let i = 3; i < img.data.length; i += 4) if (img.data[i] && Math.random() < dropout) img.data[i] = 0;
@@ -376,6 +408,78 @@ function bang() {
   return c;
 }
 
+// —— greybox 證物：第二至五天 ——
+// 一張紙或一個袋，上面一格一格寫著細節。原大時字只有 8 點，看不清；放大鏡下的兩倍圖用 16 點重新排。
+// 要用放大鏡才發現的細節（zoom），原大時只是一片灰。格子的位置就是細節的位置（hotspots）。
+const GREYBOX = {
+  D1: { w: 88, h: 100, kind: 'paper', head: PAL.ink },
+  P3: { w: 64, h: 72, kind: 'paper', head: PAL.brassDark },
+  P5: { w: 92, h: 116, kind: 'paper', head: PAL.ink },
+  P6: { w: 104, h: 72, kind: 'photo', head: PAL.photo },
+  V1: { w: 92, h: 100, kind: 'paper', head: PAL.trust },
+  P7: { w: 84, h: 72, kind: 'bag', head: PAL.suit },
+};
+
+function greyboxDoc(id, s) {
+  const spec = GREYBOX[id];
+  const ex = EXHIBITS[id];
+  const { c, ctx } = P.canvas(spec.w * s, spec.h * s);
+  const R = (x, y, w, h, color) => P.rect(ctx, x * s, y * s, w * s, h * s, color);
+  const face = spec.kind === 'photo' ? PAL.photo : spec.kind === 'bag' ? PAL.wallLight : PAL.paper;
+  const ink = spec.kind === 'photo' ? PAL.white : PAL.ink;
+  R(0, 0, spec.w, spec.h, spec.kind === 'photo' ? PAL.white : face);
+  if (spec.kind === 'photo') R(3, 3, spec.w - 6, spec.h - 14, PAL.photo);
+  P.frame(ctx, 0, 0, spec.w * s, spec.h * s, PAL.paperShade);
+  R(0, 0, spec.w, 11, spec.head);
+  const head = P.text(`${ex.code} ${ex.name}`, { size: 8 * s, weight: 700, color: PAL.white, threshold: s > 1 ? 110 : 90 });
+  ctx.drawImage(head.canvas, 3 * s, s);
+  const hotspots = {};
+  let y = 14;
+  for (const d of ex.details) {
+    const width = spec.w - 8;
+    const t1 = P.text(d.text, { size: 8, width: width - 4, lineHeight: 9, threshold: 90 });
+    const h = t1.lines.length * 9 + 4;
+    hotspots[d.id] = [4, y, width, h];
+    P.dither(ctx, 4 * s, y * s, width * s, s, spec.kind === 'photo' ? PAL.grey : PAL.paperLine);
+    if (d.zoom && s === 1) {
+      P.dither(ctx, 6, y + 3, width - 6, h - 5, PAL.grey);
+    } else {
+      const color = spec.kind === 'photo' ? PAL.white : d.zoom ? PAL.trust : ink;
+      const t = P.text(d.text, { size: 8 * s, width: (width - 4) * s + (s > 1 ? 2 : 0), lineHeight: 9 * s, color, threshold: s > 1 ? 110 : 90 });
+      ctx.drawImage(t.canvas, 6 * s, (y + 2) * s);
+    }
+    y += h + 3;
+  }
+  return { canvas: c, hotspots };
+}
+
+function greyboxIcon(id) {
+  const spec = GREYBOX[id];
+  const { c, ctx } = P.canvas(24, 18);
+  if (spec.kind === 'photo') {
+    P.rect(ctx, 0, 0, 24, 18, PAL.white);
+    P.rect(ctx, 2, 2, 20, 12, PAL.photo);
+  } else if (spec.kind === 'bag') {
+    P.rect(ctx, 0, 0, 24, 18, PAL.wallLight);
+    P.rect(ctx, 0, 0, 24, 3, spec.head);
+    P.rect(ctx, 7, 6, 10, 9, PAL.wallDark);
+  } else {
+    P.rect(ctx, 3, 0, 18, 18, PAL.paper);
+    P.rect(ctx, 5, 2, 14, 2, spec.head);
+    for (let y = 6; y < 16; y += 3) P.rect(ctx, 5, y, 14, 1, PAL.grey);
+  }
+  P.frame(ctx, spec.kind === 'paper' ? 3 : 0, 0, spec.kind === 'paper' ? 18 : 24, 18, PAL.black);
+  return c;
+}
+
+// 跟 evidence.js 的 EVIDENCE 同一個格式：bake 把兩張表一起輸出。
+export const GREYBOX_EVIDENCE = Object.fromEntries(Object.keys(GREYBOX).map((id) => [id, {
+  name: EXHIBITS[id].name, w: GREYBOX[id].w, h: GREYBOX[id].h, greybox: true,
+  draw: (s) => greyboxDoc(id, s).canvas, icon: () => greyboxIcon(id),
+  // 要畫一次才知道格子多高，所以用到時才算
+  get hotspots() { return greyboxDoc(id, 1).hotspots; },
+}]));
+
 // 每張佔位圖：輸出到 game/art/ 的路徑和畫法；圖的尺寸就是版面上的位置（game/tests/test_art.gd 會檢查）。
 // 人像是一排三格：閉嘴、開口、眨眼。換成手畫的 PNG 之後，把它從這張表刪掉，免得被蓋過。
 function sheet(spec) {
@@ -386,8 +490,7 @@ function sheet(spec) {
 
 export const TEXTURES = [
   ['court/court.png', court],
-  ['court/witness-cheng.png', () => witness('cheng')],
-  ['court/witness-chung.png', () => witness('chung')],
+  ...Object.keys(WITNESS_LOOK).map((id) => [`court/witness-${id}.png`, () => witness(id)]),
   ['court/tick.png', () => tri(5, 3, PAL.white)],
   ['booth/booth.png', booth],
   ['booth/more.png', () => tri(7, 4, PAL.white)],
@@ -399,6 +502,7 @@ export const TEXTURES = [
   ['desk/plaque-inspect.png', () => plaque('對照')],
   ['desk/plaque-inspect-on.png', () => plaque('對照', true)],
   ['desk/plaque-booklet.png', () => plaque('須知')],
+  ['desk/plaque-slip.png', () => plaque('紙條')],
   ['desk/arrow-left.png', () => arrow(-1)],
   ['desk/arrow-right.png', () => arrow(1)],
   ['desk/loupe.png', loupe],
@@ -406,8 +510,10 @@ export const TEXTURES = [
   ['rack/rack.png', rack],
   ['rack/stamp-trust.png', () => stamp('trust')],
   ['rack/stamp-doubt.png', () => stamp('doubt')],
+  ['rack/stamp-struck.png', () => stamp('struck')],
   ['rack/imprint-trust.png', () => imprint('trust')],
   ['rack/imprint-doubt.png', () => imprint('doubt')],
+  ['rack/imprint-struck.png', () => imprint('struck')],
   ['ui/sound-on.png', () => speaker(true)],
   ['ui/sound-off.png', () => speaker(false)],
 ];

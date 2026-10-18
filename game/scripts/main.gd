@@ -1,16 +1,18 @@
 # 入口：畫面固定 480×270，畫在一個子視窗裡，按螢幕的實際像素放大（規則見 desk/fit.gd）。
-# 完結頁按「再玩一次」，就換一張新的桌面。網頁版另外開一個只讀的接口給自動試玩：window.__desk.state()。
+# 一局由 game.gd 帶著走；回顧頁按「再玩一次」，就重新開一局。
+# 網頁版另外開一個只讀的接口給自動試玩：window.__desk.state()。
 extends Node
 
 const Fit := preload("res://scripts/desk/fit.gd")
 const Text := preload("res://scripts/pixel/pixel_text.gd")
 const Pal := preload("res://scripts/pixel/palette.gd")
-const DeskScene := preload("res://scenes/desk.tscn")
+const GameScript := preload("res://scripts/game.gd")
 
 const PAD_CSS := Vector2(16, 8) # 網頁版四邊留的位置（CSS 像素），手機橫放時高度最緊
 const GAP_CSS := 8.0
 
-var desk: Node2D
+var game: Node2D
+var seed := -1
 var k := 1.0
 var dpr := 1.0
 var touch := false
@@ -25,6 +27,9 @@ var _js_callbacks: Array = []
 
 
 func _ready() -> void:
+	for a in OS.get_cmdline_user_args():
+		if a.begins_with("--seed="):
+			seed = int(a.substr(7))
 	reduced = OS.get_cmdline_user_args().has("--reduce-motion")
 	if web:
 		touch = bool(JavaScriptBridge.eval("matchMedia('(pointer: coarse)').matches", true))
@@ -36,22 +41,23 @@ func _ready() -> void:
 	if not web:
 		_size_window()
 	get_viewport().size_changed.connect(refit)
-	new_desk()
+	new_game()
 	refit()
 	if web:
 		_expose()
 
 
-func new_desk() -> void:
-	if desk != null:
-		viewport.remove_child(desk)
-		desk.queue_free()
-	desk = DeskScene.instantiate()
-	desk.sound = sound
-	desk.reduced = reduced
-	desk.restart_requested.connect(new_desk, CONNECT_DEFERRED)
-	desk.cursor_changed.connect(func(shape: int) -> void: view.mouse_default_cursor_shape = shape)
-	viewport.add_child(desk)
+func new_game() -> void:
+	if game != null:
+		viewport.remove_child(game)
+		game.queue_free()
+	game = GameScript.new()
+	game.sound = sound
+	game.reduced = reduced
+	game.seed = seed
+	game.restart_requested.connect(new_game, CONNECT_DEFERRED)
+	game.cursor_changed.connect(func(shape: int) -> void: view.mouse_default_cursor_shape = shape)
+	viewport.add_child(game)
 
 
 # 桌面版：視窗開成螢幕可用範圍內最大的整數倍（留一成半給選單列和邊框）。
@@ -100,7 +106,7 @@ func refit() -> void:
 # —— 自動試玩用：讀狀態，不改規則 ——
 
 func state() -> Dictionary:
-	var s: Dictionary = desk.state()
+	var s: Dictionary = game.state()
 	var win := get_viewport().get_visible_rect().size
 	s.view = {"x": view.position.x, "y": view.position.y, "k": k, "w": win.x, "h": win.y, "dpr": dpr, "touch": touch, "rotate": rotate_hint.visible}
 	return s

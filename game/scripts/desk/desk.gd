@@ -1,15 +1,16 @@
-# 第一天的法庭桌面（手感切片）：試四種手感——拖證物、放大鏡、對照紅線、蓋章。
+# 法庭桌面：聽證人、拖證物、放大鏡、對照紅線、蓋章、遞紙條。一局裡每天的法庭都在這張桌上。
 # 規則全部交給 rules.gd；這裡只管畫面、輸入和時間。由網頁版（commit 3a3a819 的 prototype/desk/court.js）逐段搬過來。
 # 固定的美術放在 desk.tscn，打開場景就看得到整張桌；會變的東西（字、筆記、鏡片、紅線）在這裡即場畫。
+# 審判的狀態（trial）由 game.gd 給，五天共用；筆記本和桌上的證物也留到下一天。
 extends Node2D
 
-signal restart_requested
 signal cursor_changed(shape: int)
 signal typed
 signal advanced
 signal leave_pressed
 signal modal_closed
 signal line_drawn
+signal struck_done
 
 const Rules := preload("res://scripts/rules/rules.gd")
 const CaseData := preload("res://scripts/rules/case_data.gd")
@@ -19,22 +20,14 @@ const Text := preload("res://scripts/pixel/pixel_text.gd")
 const L := preload("res://scripts/desk/layout.gd")
 const Art := preload("res://scripts/desk/art.gd")
 const SoundScript := preload("res://scripts/desk/sound.gd")
+const Speakers := preload("res://scripts/ui/speakers.gd")
+const MenuScript := preload("res://scripts/ui/menu.gd")
 
 const ZOOM_DWELL := 0.35 # 放大鏡要停留多久才算看清楚（秒）
 const WRITE_SPEED := 150.0 # 筆記本寫字的速度（像素／秒）
 const PUNCT := "，。、；：？！「」『』（）…—"
-
-# 對白的嗶聲音高、特寫和頭頂的小三角；旁白和你心裡的話沒有嗶聲，字色不同，打字慢一點。
-const VOICES := {
-	"庭警": {"portrait": "usher", "head": "usher", "pitch": 400.0},
-	"控方": {"portrait": "prosecutor", "head": "prosecutor", "pitch": 470.0},
-	"辯方": {"portrait": "defense", "head": "defense", "pitch": 520.0},
-	"法官": {"portrait": "judge", "head": "judge", "pitch": 300.0},
-	"鄭督察": {"portrait": "cheng", "head": "witness", "pitch": 360.0},
-	"鍾永發": {"portrait": "chung", "head": "witness", "pitch": 330.0},
-	"旁白": {"color": Pal.WALL_LIGHT, "speed": 45.0},
-	"你": {"color": Pal.BRASS_LIGHT, "speed": 40.0},
-}
+const PER_PAGE := 3 # 筆記本每頁最多寫幾個說法；多了就翻到新的一頁（續）
+const SLIP := Rect2i(330, 253, 44, 15) # 「紙條」：有問題可以問時才出現
 
 # 字款：[點陣字表, 斷行寬度, 行距, 預設字色]
 const STYLE := {
@@ -66,13 +59,18 @@ const Z := {
 }
 
 const TOOLS := {"inspect": L.INSPECT, "booklet": L.BOOKLET, "prev": L.PAGE_PREV, "next": L.PAGE_NEXT}
+const KINDS := {"normal": ["trust", "doubt"], "strike": ["struck"]}
 
-var sound: Node # 由 main.gd 給；單獨打開這個場景時自己開一個
+var sound: Node # 由 game.gd 給；單獨打開這個場景時自己開一個
 var reduced := false # 系統開了「減少動態」：蓋章不震
 
 var C: Dictionary # 案件資料
 var ui: Dictionary # 畫面上的字
-var trial: Dictionary
+var trial: Dictionary # 由 game.gd 給；單獨打開時自己開一局
+var day := 1
+var menu: Node2D
+var slip_busy := false
+var struck_pending := false
 var pages: Array = []
 var page_index := 0
 var entry_rects: Array = []
@@ -88,7 +86,7 @@ var stamping: Variant = null
 var rack_x := float(L.RACK_HIDDEN_X)
 var rack_ready := false
 var stamp_target: Variant = null
-var stamp_busy := {"trust": false, "doubt": false}
+var stamp_busy := {"trust": false, "doubt": false, "struck": false}
 var typing: Variant = null
 var waiting := false
 var voice: Dictionary
@@ -123,7 +121,8 @@ var _shade: Image
 @onready var loupe_img: Sprite2D = $Loupe
 @onready var bang: Sprite2D = $Bang
 @onready var rack: Sprite2D = $Rack
-@onready var stamps := {"trust": $StampTrust as Sprite2D, "doubt": $StampDoubt as Sprite2D}
+@onready var stamps := {"trust": $StampTrust as Sprite2D, "doubt": $StampDoubt as Sprite2D, "struck": $StampStruck as Sprite2D}
+@onready var slip_img: Sprite2D = $Slip
 @onready var stamp_shadow: Sprite2D = $StampShadow
 @onready var overlay: Sprite2D = $Overlay
 @onready var red_line: Node2D = $RedLine
@@ -137,8 +136,12 @@ func _ready() -> void:
 	if sound == null:
 		sound = SoundScript.new()
 		add_child(sound)
-	trial = Rules.create_game({"seed": randi() & 0x7fffffff})
+	if trial.is_empty():
+		trial = Rules.create_game({"seed": randi() & 0x7fffffff})
 	voice = voice_of("旁白")
+	menu = MenuScript.new()
+	menu.sound = sound
+	add_child(menu)
 	_lens_mask = Art.disc(L.LENS_R)
 	# 半格網點：對照模式和彈出視窗用它把背景壓暗，不用半透明。
 	_shade = Draw.canvas(L.W, L.H)
@@ -156,14 +159,10 @@ func _ready() -> void:
 	layout_rack()
 	draw_name("")
 	draw_dialogue("", Pal.WHITE)
-	play()
 
 
 func voice_of(who: String) -> Dictionary:
-	var v := {"portrait": null, "head": null, "pitch": 0.0, "color": Pal.WHITE, "speed": 32.0}
-	v.merge(VOICES.get(who, {}), true)
-	v.name = ui.speakers.get(who, "")
-	return v
+	return Speakers.voice(who)
 
 
 # —— 會變的圖：每一個都是一張 Image，畫好就換上 ——
@@ -208,31 +207,43 @@ func draw_dialogue(text: String, color: Color) -> void:
 	show_image("dialogue", img)
 
 
-# —— 流程：一條 await 的時間線。重新開始時整個場景換新，舊的時間線跟著消失 ——
+# —— 流程：一天的法庭，一條 await 的時間線。重新開始時整局換新，舊的時間線跟著消失 ——
 
-func play() -> void:
-	show_modal("title")
-	await modal_closed
-	for beat in ui.intro:
-		await say(beat)
-	for wid: String in C.DAYS[0].witnesses:
+func play_day(d: int) -> void:
+	day = d
+	var def: Dictionary = C.DAYS[d - 1]
+	for beat in def.get("open", []):
+		await court_beat(beat)
+	for wid: String in def.witnesses:
 		var script: Array = C.WITNESSES[wid].script
 		for i in script.size():
-			var beat: Dictionary = script[i]
-			if beat.has("claim"):
-				Rules.hear_claim(trial, beat.claim)
-				write_claim(wid, beat.claim)
-			if beat.has("exhibit"):
-				Rules.add_exhibit(trial, beat.exhibit)
-				deliver(beat.exhibit)
-			await say(beat)
+			await court_beat(script[i])
 			if i == 0:
 				call_witness(wid)
 		await stamp_phase(wid)
 		await dismiss_witness()
-	for beat in C.DAYS[0].adjourn:
+	for beat in def.get("closing", []):
+		await court_beat(beat)
+	for beat in def.adjourn:
 		await say(beat)
-	show_modal("end")
+
+
+# 一句證詞：先把說法寫進筆記本、證物送到托盤，再打字；法官剔除說法時，要你親手蓋「不予採納」。
+func court_beat(beat: Dictionary) -> void:
+	if beat.has("claim"):
+		Rules.hear_claim(trial, beat.claim)
+		write_claim(C.CLAIMS[beat.claim].witness, beat.claim)
+	if beat.has("exhibit"):
+		Rules.add_exhibit(trial, beat.exhibit)
+		deliver(beat.exhibit)
+	if beat.has("rule"):
+		Rules.add_rule(trial, beat.rule)
+	await say(beat)
+	if beat.has("strikeExhibit"):
+		Rules.strike_exhibit(trial, beat.strikeExhibit)
+		mark_struck(beat.strikeExhibit)
+	if beat.has("strike"):
+		await strike_phase(beat.strike)
 
 
 func wait(seconds: float) -> void:
@@ -267,7 +278,7 @@ func advance() -> void:
 
 
 func call_witness(wid: String) -> void:
-	turn_to(pages.find(page_for(wid)))
+	turn_to(page_index_of(page_for(wid, false)))
 	witness.texture = Art.texture("court/witness-%s.png" % wid)
 	witness.position = Vector2(-26, 25)
 	witness.visible = true
@@ -292,14 +303,26 @@ func dismiss_witness() -> void:
 
 # —— 筆記本 ——
 
-func page_for(wid: String) -> Dictionary:
+# 這個證人最後一頁；寫滿了（PER_PAGE 個說法）就開新的一頁，抬頭加「（續）」。
+func page_for(wid: String, room := true) -> Dictionary:
+	var last: Variant = null
 	for p in pages:
 		if p.wid == wid:
-			return p
+			last = p
+	if last != null and (not room or last.entries.size() < PER_PAGE):
+		return last
 	var w: Dictionary = C.WITNESSES[wid]
-	var page := {"wid": wid, "header": text_of("%s（%s）" % [w.name, w.side], "header"), "entries": []}
+	var header := "%s（%s）" % [w.name, w.side] if last == null else "%s（續）" % w.name
+	var page := {"wid": wid, "header": text_of(header, "header"), "entries": []}
 	pages.append(page)
 	return page
+
+
+func page_index_of(page: Dictionary) -> int:
+	for i in pages.size():
+		if is_same(pages[i], page):
+			return i
+	return -1
 
 
 func entry_of(claim: String) -> Variant:
@@ -332,7 +355,7 @@ func write_claim(wid: String, claim: String) -> void:
 	var entry := {"claim": claim, "text": text, "shown": 0.0, "notes": [], "imprints": []}
 	page.entries.append(entry)
 	writing.append({"item": entry, "total": _sum(text.widths)})
-	turn_to(pages.find(page))
+	turn_to(page_index_of(page))
 
 
 func add_note(claim: String, str: String, style: String) -> void:
@@ -404,8 +427,17 @@ func draw_page() -> void:
 
 # —— 證物 ——
 
+# 托盤放得下四件；多了就疊起來，後到的蓋在上面。
 func slot_pos(slot: int) -> Vector2i:
-	return Vector2i(L.SLOTS.x + slot * L.SLOT_STEP, L.SLOTS.y)
+	var step := mini(L.SLOT_STEP, floori((L.TRAY.end.x - 4 - 24 - L.SLOTS.x) / float(maxi(1, docs.size() - 1))))
+	return Vector2i(L.SLOTS.x + slot * step, L.SLOTS.y)
+
+
+func relayout_tray() -> void:
+	for d in docs:
+		if d.form == "icon" and not d.arriving and not (drag != null and drag.kind == "doc" and is_same(drag.doc, d)):
+			var sp := slot_pos(d.slot)
+			set_doc(d, "icon", sp.x, sp.y)
 
 
 func size_of(doc: Dictionary, form: String = "") -> Vector2i:
@@ -421,6 +453,7 @@ func deliver(id: String) -> void:
 	doc.img = _sprite(docs_layer)
 	docs.append(doc)
 	restack()
+	relayout_tray()
 	var sp := slot_pos(doc.slot)
 	set_doc(doc, "icon", sp.x, sp.y - 16)
 	var tw := create_tween()
@@ -431,6 +464,20 @@ func deliver(id: String) -> void:
 		set_doc(doc, "icon", sp.x, sp.y)
 		sound.paper())
 	queue_caption(fill(ui.delivered, C.EXHIBITS[id]), "info")
+	if trial.get("ext", {}).get("struck_exhibits", {}).has(id):
+		mark_struck(id)
+
+
+# 被裁定不予接納的證物：蓋上紅色的印。
+func mark_struck(id: String) -> void:
+	for d in docs:
+		if d.id == id and not d.has("struck"):
+			var mark := Sprite2D.new()
+			mark.centered = false
+			mark.texture = Art.texture("rack/imprint-struck.png")
+			mark.position = Vector2(1, 1)
+			d.img.add_child(mark)
+			d.struck = mark
 
 
 func _sprite(parent: Node) -> Sprite2D:
@@ -793,15 +840,57 @@ func fade_line() -> void:
 # —— 蓋章 ——
 
 func stamp_phase(wid: String) -> void:
-	stamping = {"wid": wid}
-	for i in pages.size():
-		if pages[i].wid == wid:
-			turn_to(i)
+	stamping = {"wid": wid, "mode": "normal"}
+	turn_to(page_index_of(page_for(wid, false)))
 	speak({"who": "旁白", "text": fill(ui.stepDown, {"name": C.WITNESSES[wid].name})})
 	await slide_rack(true)
 	await leave_pressed
 	await slide_rack(false)
 	stamping = null
+
+
+# 法官剔除一個說法：印章盤只放紅色的「不予採納」，你要親手蓋在那一行，才繼續。
+func strike_phase(claim: String) -> void:
+	Rules.strike_claim(trial, claim)
+	var entry: Variant = entry_of(claim)
+	if entry == null:
+		Rules.set_player_stamp(trial, claim, "struck")
+		return
+	stamping = {"wid": C.CLAIMS[claim].witness, "mode": "strike", "claim": claim}
+	for i in pages.size():
+		if pages[i].entries.any(func(e: Dictionary) -> bool: return is_same(e, entry)):
+			turn_to(i)
+	speak({"who": "旁白", "text": fill(ui.strikeHint, {"claim": C.CLAIMS[claim].text})})
+	await slide_rack(true)
+	await struck_done
+	await slide_rack(false)
+	stamping = null
+
+
+func rack_mode() -> String:
+	return stamping.mode if stamping != null else "normal"
+
+
+# 提問紙條：證人退庭前，可以遞一張紙條給法官（每天一張）。
+func slip_available() -> bool:
+	return stamping != null and stamping.mode == "normal" and rack_ready and not slip_busy and drag == null \
+		and not Rules.slips_for(trial, stamping.wid).is_empty()
+
+
+func ask_slip() -> void:
+	var slips: Array = Rules.slips_for(trial, stamping.wid)
+	var i: int = await menu.ask(ui.slip.title, slips.map(func(q: Dictionary) -> Dictionary: return {"text": q.question}), ui.slip.cancel)
+	if i < 0 or stamping == null:
+		return
+	slip_busy = true
+	var beats: Array = Rules.use_slip(trial, slips[i].id)
+	stats.slips = stats.get("slips", 0) + 1
+	await slide_rack(false)
+	for beat in beats:
+		await court_beat(beat)
+	speak({"who": "旁白", "text": fill(ui.stepDown, {"name": C.WITNESSES[stamping.wid].name})})
+	await slide_rack(true)
+	slip_busy = false
 
 
 func slide_rack(show: bool) -> void:
@@ -816,25 +905,28 @@ func slide_rack(show: bool) -> void:
 	layout_rack()
 
 
-func stamp_home(kind: String) -> Vector2i:
-	var slot: Vector2i = L.RACK_SLOTS[kind]
-	return Vector2i(roundi(rack_x) + slot.x, L.RACK_Y + slot.y)
-
-
 func rack_rect() -> Rect2i:
 	return Rect2i(roundi(rack_x), L.RACK_Y, L.RACK_W, L.RACK_H)
 
 
+func stamp_home(kind: String) -> Vector2i:
+	var slot: Vector2i = L.RACK_SLOTS["trust" if kind == "struck" else kind]
+	return Vector2i(roundi(rack_x) + slot.x, L.RACK_Y + slot.y)
+
+
+# 平時印章盤上是「信」「疑」；法官剔除說法時，只放紅色的「不予採納」。
 func layout_rack() -> void:
 	rack.position.x = roundi(rack_x)
-	for kind in ["trust", "doubt"]:
+	var shown: Array = KINDS[rack_mode()]
+	for kind in stamps:
+		stamps[kind].visible = shown.has(kind) or stamp_busy[kind] or (drag != null and drag.kind == "stamp" and drag.which == kind)
 		if (drag != null and drag.kind == "stamp" and drag.which == kind) or stamp_busy[kind]:
 			continue
 		stamps[kind].position = Vector2(stamp_home(kind))
 
 
 func stamp_at(x: int, y: int) -> Variant:
-	for kind in ["trust", "doubt"]:
+	for kind in KINDS[rack_mode()]:
 		var s: Sprite2D = stamps[kind]
 		if not stamp_busy[kind] and L.inside(Rect2i(Vector2i(s.position), Vector2i(26, 34)), x, y):
 			return kind
@@ -889,13 +981,23 @@ func drop_stamp() -> void:
 	s.z_index = Z.stamp
 	stamp_busy[kind] = false
 	layout_rack()
+	if struck_pending:
+		struck_pending = false
+		struck_done.emit()
 
 
 func stamp_claim(claim: String, kind: String) -> void:
 	var entry: Variant = entry_of(claim)
+	# 被剔除的說法不可以再蓋信或疑；紅色的印只可以蓋在法官剔除的那一行。
+	if kind == "struck" and (stamping == null or claim != stamping.get("claim")):
+		return
+	if kind != "struck" and trial.struck.get(claim, false):
+		return
 	# 證人還在台上時改印章不算改主意；翻回前一頁改，就會記下來。
 	var current: bool = stamping != null and C.CLAIMS[claim].witness == stamping.wid
-	var changed: bool = Rules.set_player_stamp(trial, claim, kind, not current)
+	var changed: bool = Rules.set_player_stamp(trial, claim, kind, kind == "struck" or not current)
+	if kind == "struck":
+		struck_pending = true
 	sound.thud()
 	if not reduced:
 		shake_left = 0.09
@@ -909,7 +1011,7 @@ func stamp_claim(claim: String, kind: String) -> void:
 
 
 func leave() -> void:
-	if stamping == null or not rack_ready or drag != null:
+	if stamping == null or stamping.mode != "normal" or not rack_ready or drag != null or slip_busy:
 		return
 	var blank := false
 	for id in C.WITNESSES[stamping.wid].claims:
@@ -937,6 +1039,8 @@ func hint() -> Variant:
 		return null
 	var h: Dictionary = ui.hints
 	if stamping != null:
+		if stamping.mode == "strike":
+			return fill(ui.strikeHint, {"claim": C.CLAIMS[stamping.claim].text})
 		return h.stamp
 	if mode == "inspect":
 		return h.pickSecond if selection.size() else h.pickFirst
@@ -978,52 +1082,29 @@ func tick_caption(delta: float) -> void:
 	show_image("caption", img)
 
 
-# —— 彈出視窗：開場、須知、完結 ——
+# —— 彈出視窗：《陪審員須知》 ——
 
 func show_modal(kind: String) -> void:
-	modal = {"kind": kind, "again": null}
+	modal = {"kind": kind}
 	var img: Image = _shade.duplicate()
-	if kind == "title":
-		draw_title(img)
-	elif kind == "booklet":
-		draw_booklet(img)
-	else:
-		draw_end(img)
+	draw_booklet(img)
 	show_image("modal", img)
 	modal_img.visible = true
 
 
 func close_modal() -> void:
-	if modal == null or modal.kind == "end":
+	if modal == null:
 		return
 	modal = null
 	modal_img.visible = false
 	modal_closed.emit()
 
 
-static func panel(img: Image, x: int, y: int, w: int, h: int) -> void:
-	Draw.rect(img, x, y, w, h, Pal.PANEL)
-	Draw.frame(img, x, y, w, h, Pal.BRASS)
-	Draw.frame(img, x + 1, y + 1, w - 2, h - 2, Pal.BLACK)
-
-
-static func centered(img: Image, t: Dictionary, y: int) -> void:
-	Draw.blit(img, t.image, floori((L.W - t.width) / 2.0), y)
-
-
-func draw_title(img: Image) -> void:
-	panel(img, 110, 62, 260, 140)
-	centered(img, text_of(ui.title, "title"), 76)
-	centered(img, text_of(ui.subtitle, "body", Pal.WALL_LIGHT), 110)
-	centered(img, text_of(ui.controls, "body", Pal.WALL_LIGHT, 228), 134)
-	centered(img, text_of(ui.start, "bold", Pal.BRASS_LIGHT), 176)
-
-
 func draw_booklet(img: Image) -> void:
-	var x := 70
-	var y := 28
-	var w := 340
-	var h := 214
+	var x := 60
+	var y := 8
+	var w := 360
+	var h := 254
 	Draw.dither(img, x + 3, y + 3, w, h, Pal.BLACK)
 	Draw.rect(img, x, y, w, h, Pal.PAPER)
 	Draw.frame(img, x, y, w, h, Pal.PAPER_SHADE)
@@ -1038,37 +1119,11 @@ func draw_booklet(img: Image) -> void:
 	Draw.blit(img, close.image, x + w - close.width - 10, y + h - 20)
 
 
-func draw_end(img: Image) -> void:
-	panel(img, 24, 12, 432, 246)
-	var y := [22]
-	var put := func(t: Dictionary, gap := 0) -> void:
-		Draw.blit(img, t.image, 40, y[0])
-		y[0] += t.height + gap
-	centered(img, text_of(ui.end.title, "heading"), y[0])
-	y[0] += 28
-	put.call(text_of(fill(ui.end.stats, stats), "body"))
-	var belief: String = ui.end.beliefs[Rules.belief_of(trial, "you")]
-	put.call(text_of(fill(ui.end.belief, {"belief": belief}), "body", Pal.BRASS_LIGHT))
-	if not stats.found:
-		put.call(text_of(ui.end.missed, "body", Pal.GREY))
-	y[0] += 8
-	put.call(text_of(ui.end.ask, "body", Pal.BRASS), 2)
-	for i in ui.end.questions.size():
-		put.call(text_of("%d. %s" % [i + 1, ui.end.questions[i]], "body", null, 396))
-	var again := text_of(ui.end.again, "bold")
-	var bw: int = again.width + 20
-	var bx := floori((L.W - bw) / 2.0)
-	var by := 232
-	Draw.rect(img, bx, by, bw, 17, Pal.BRASS)
-	Draw.frame(img, bx, by, bw, 17, Pal.BRASS_DARK)
-	Draw.rect(img, bx + 1, by + 1, bw - 2, 1, Pal.BRASS_LIGHT)
-	Draw.blit(img, again.image, bx + 10, by + 1)
-	modal.again = Rect2i(bx, by, bw, 17)
-
-
 # —— 輸入：位置一律是 480×270 的遊戲座標 ——
 
 func _unhandled_input(event: InputEvent) -> void:
+	if not is_visible_in_tree():
+		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		var p := Vector2i(event.position.floor())
 		if event.pressed:
@@ -1086,6 +1141,8 @@ func tool_at(x: int, y: int) -> Variant:
 	for id in TOOLS:
 		if L.inside(L.strip(TOOLS[id]), x, y):
 			return id
+	if slip_available() and L.inside(L.strip(SLIP), x, y):
+		return "slip"
 	if stamping != null and rack_ready and mode == "normal":
 		var r := rack_rect()
 		if L.inside(Rect2i(r.position + L.RACK_LEAVE.position, L.RACK_LEAVE.size), x, y):
@@ -1096,6 +1153,8 @@ func tool_at(x: int, y: int) -> Variant:
 func press_tool(id: String, down: bool) -> void:
 	if tools.has(id):
 		tools[id].position.y = TOOLS[id].position.y + (1 if down else 0)
+	elif id == "slip":
+		slip_img.position.y = SLIP.position.y + (1 if down else 0)
 	if down:
 		sound.clack()
 
@@ -1112,6 +1171,8 @@ func use_tool(id: String) -> void:
 			turn_to(page_index + 1)
 		"leave":
 			leave()
+		"slip":
+			ask_slip()
 
 
 func toggle_sound() -> void:
@@ -1121,10 +1182,9 @@ func toggle_sound() -> void:
 
 func on_down(x: int, y: int) -> void:
 	if modal != null:
-		if modal.kind != "end":
-			close_modal()
-		elif modal.again != null and L.inside(modal.again, x, y):
-			restart_requested.emit()
+		close_modal()
+		return
+	if menu.visible:
 		return
 	if busy or drag != null:
 		return
@@ -1202,10 +1262,8 @@ func on_key(key: Key) -> void:
 		toggle_sound()
 		return
 	if modal != null:
-		if modal.kind != "end" and key in [KEY_SPACE, KEY_ENTER, KEY_KP_ENTER, KEY_ESCAPE]:
+		if key in [KEY_SPACE, KEY_ENTER, KEY_KP_ENTER, KEY_ESCAPE]:
 			close_modal()
-		elif modal.kind == "end" and key in [KEY_ENTER, KEY_KP_ENTER]:
-			restart_requested.emit()
 		return
 	if key == KEY_ESCAPE and mode == "inspect":
 		set_mode("normal")
@@ -1217,8 +1275,8 @@ func update_cursor(x: int, y: int) -> void:
 	var c := Input.CURSOR_ARROW
 	if drag != null:
 		c = Input.CURSOR_DRAG
-	elif modal != null:
-		c = Input.CURSOR_POINTING_HAND if modal.kind != "end" or (modal.again != null and L.inside(modal.again, x, y)) else Input.CURSOR_ARROW
+	elif modal != null or menu.visible:
+		c = Input.CURSOR_POINTING_HAND
 	elif L.inside(L.SOUND, x, y) or tool_at(x, y) != null:
 		c = Input.CURSOR_POINTING_HAND
 	elif mode == "inspect":
@@ -1243,6 +1301,7 @@ func _process(delta: float) -> void:
 	tick_line(delta)
 	tick_caption(delta)
 	more.visible = waiting and typing == null and int(time_ms / 400.0) % 2 == 0
+	slip_img.visible = slip_available()
 	if walking:
 		witness.position.y = 25 - (int(witness.position.x / 4.0) % 2)
 	if page_dirty:
@@ -1312,6 +1371,8 @@ func state() -> Dictionary:
 	var out := {
 		"trial": trial, "mode": mode, "busy": busy, "modal": modal.kind if modal != null else null,
 		"stamping": stamping.wid if stamping != null else null, "typing": typing != null, "waiting": waiting,
+		"stamp_mode": rack_mode(), "day": day, "slip": [SLIP.position.x, SLIP.position.y, SLIP.size.x, SLIP.size.y] if slip_available() else null,
+		"slip_busy": slip_busy, "menu": menu.state() if menu.visible else null,
 		"rack": {"x": roundi(rack_x), "ready": rack_ready}, "loupe": {"x": loupe.x, "y": loupe.y},
 		"page": page_index, "pages": pages.size(), "stats": stats, "drag": drag.kind if drag != null else null,
 		"muted": sound.muted, "stamp_busy": stamp_busy, "writing": writing.size(), "captions": captions.size(),
@@ -1334,6 +1395,5 @@ func state() -> Dictionary:
 	out.stamps = {}
 	for kind in stamps:
 		out.stamps[kind] = [int(stamps[kind].position.x), int(stamps[kind].position.y)]
-	out.again = r.call(modal.again) if modal != null and modal.again != null else null
 	out.hotspots = Art.evidence()
 	return out

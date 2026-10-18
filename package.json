@@ -2,13 +2,13 @@
   "name": "seventh-seat",
   "private": true,
   "type": "module",
-  "description": "第七席：Godot 版的工具（案件資料、美術輸出、自動試玩）",
+  "description": "\u7b2c\u4e03\u5e2d\uff1aGodot \u7248\u7684\u5de5\u5177\uff08\u6848\u4ef6\u8cc7\u6599\u3001\u7f8e\u8853\u8f38\u51fa\u3001\u81ea\u52d5\u8a66\u73a9\uff09",
   "scripts": {
     "case": "node tools/case-json.js",
     "bake": "node tools/bake.js",
     "test": "node --test \"art/test/*.test.js\" \"prototype/test/*.test.js\"",
     "check": "node tools/check.js",
-    "test:godot": "godot --headless --path game -s res://tests/run.gd"
+    "test:godot": "godot --headless --fixed-fps 60 --path game -s res://tests/run.gd"
   },
   "devDependencies": {
     "playwright-core": "^1.56.1"

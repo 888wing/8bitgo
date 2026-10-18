@@ -2,7 +2,7 @@
 // 由 tools/bake.js 打開這一頁，再呼叫 window.bake()。字要用瀏覽器的字型畫，所以這一步不能在 Node 做。
 import * as P from '../src/pixels.js';
 import { PAL } from '../src/palette.js';
-import { TEXTURES } from '../src/placeholder.js';
+import { GREYBOX_EVIDENCE, TEXTURES } from '../src/placeholder.js';
 import { EVIDENCE, EVIDENCE_TEXT } from '../src/evidence.js';
 import { FRAME_TEXT, drawFrame } from '../style-frame/frame.js';
 import { SHEET_TEXT, drawSheet } from '../style-frame/sheet.js';
@@ -16,7 +16,7 @@ export const GLYPH_STYLES = {
   bold: { font: 'print', size: 12, weight: 700, threshold: 120 },
   // 大字只用在一兩句，只輸出那幾句的字
   title: { font: 'print', size: 24, weight: 700, threshold: 120, only: (ui) => ui.title },
-  heading: { font: 'print', size: 16, weight: 700, threshold: 120, only: (ui) => ui.end.title },
+  heading: { font: 'print', size: 16, weight: 700, threshold: 120, only: (ui, c) => c.ENDINGS.map((e) => e.title).join('') },
   small: { font: 'print', size: 8, weight: 400, threshold: 90 },
 };
 
@@ -35,7 +35,7 @@ const SAMPLES = [
   ['body', '你發現了 2 個細節，寫了 3 句批註，蓋了 6 個印。', 396, 15],
   ['bold', '再玩一次', 0, 15],
   ['title', '第七席', 0, 28],
-  ['heading', '手感切片完', 0, 20],
+  ['heading', '合理懷疑', 0, 20],
   ['small', '1/2', 0, 11],
 ];
 
@@ -143,16 +143,16 @@ window.bake = async () => {
   const json = {};
   for (const [path, draw] of TEXTURES) images.push([`game/art/${path}`, draw()]);
   const evidence = {};
-  for (const [id, e] of Object.entries(EVIDENCE)) {
+  for (const [id, e] of Object.entries({ ...EVIDENCE, ...GREYBOX_EVIDENCE })) {
     images.push([`game/art/evidence/${id}.png`, e.draw(1)]);
     images.push([`game/art/evidence/${id}-zoom.png`, e.draw(2)]);
     images.push([`game/art/evidence/${id}-icon.png`, e.icon()]);
-    evidence[id] = { name: e.name, w: e.w, h: e.h, hotspots: e.hotspots };
+    evidence[id] = { name: e.name, w: e.w, h: e.h, hotspots: e.hotspots, greybox: !!e.greybox };
   }
   json['game/art/evidence/evidence.json'] = evidence;
   json['game/art/palette.json'] = PAL;
   for (const [name, { only, ...style }] of Object.entries(GLYPH_STYLES)) {
-    const a = atlas(style, only ? [...new Set([...only(ui), ...'0123456789/'])].sort() : chars);
+    const a = atlas(style, only ? [...new Set([...only(ui, caseData), ...'0123456789/'])].sort() : chars);
     images.push([`game/art/fonts/${name}.png`, a.canvas, true]);
     json[`game/art/fonts/${name}.json`] = a.meta;
   }

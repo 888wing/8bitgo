@@ -1,4 +1,4 @@
-# 開發用：開一個真的視窗，推進到第一位證人說完證物，截圖，再結束。
+# 開發用：開一個真的視窗，過了傳票和序幕，推進到第一位證人說完證物，截圖，再結束。
 # godot --path game res://tools/capture.tscn -- --out=/某處/desk.png
 extends Node
 
@@ -13,8 +13,12 @@ func _ready() -> void:
 	var main: Node = load("res://scenes/main.tscn").instantiate()
 	add_child(main)
 	await _wait(0.5)
-	var desk: Node = main.desk
-	desk.close_modal()
+	var game: Node = main.game
+	game.story.opened.emit()
+	while game.screen != "desk":
+		game.story.talk.advance()
+		await _wait(0.05)
+	var desk: Node = game.desk
 	for i in 400:
 		if desk.docs.size() >= 3 and not desk.docs[2].arriving and desk.writing.is_empty():
 			break

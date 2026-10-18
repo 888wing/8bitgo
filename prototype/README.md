@@ -1,6 +1,8 @@
 # 第七席原型
 
-這裡是文字原型，以及案件資料和規則的 JS 版。桌面手感切片已經改用 Godot 4.7 重寫，見 [game/](../game/README.md)；網頁版（Phaser）最後一版在 commit `3a3a819`。
+這裡是文字原型，以及案件資料和規則的 JS 版。文字原型只玩第一、二天；`case.js` 也寫了第三至五天，由 Godot 版用。完整一局在 [game/](../game/README.md)（Godot 4.7）；網頁版的桌面切片（Phaser）最後一版在 commit `3a3a819`。
+
+規則從第三天起只在 Godot 版（`game/scripts/rules/rules.gd`）；這裡的 `engine.js` 不再加新規則。
 
 先在這個資料夾執行 `node build.js`，產生 `dist/index.html`，然後雙擊就可以玩。開發時要經伺服器載入 ES 模組：執行 `python3 -m http.server 8000`，打開 http://localhost:8000 。
 

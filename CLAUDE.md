@@ -12,11 +12,11 @@
 
 | 位置 | 內容 |
 |---|---|
-| `prototype/case.js` | 案件資料：證人、說法、證物、理由、陪審員、對白。改內容只改這裡，然後 `npm run case` 寫成 `game/data/case.json` |
-| `prototype/engine.js` | 規則（JS 版）：純邏輯，不碰畫面；文字原型、測試和模擬用它 |
-| `prototype/main.js`、`prototype/index.html` | 文字原型的畫面 |
-| `game/` | Godot 4.7 版：第一天的法庭桌面，480×270。說明見 `game/README.md` |
-| `game/scripts/rules/` | 規則（Godot 版）：由 `engine.js` 移植，測試逐步對照 JS 版的結果 |
+| `prototype/case.js` | 案件資料：五天的證人、說法、證物、理由、陪審員、對白、紙條、夜晚、早晨、結局。改內容只改這裡，然後 `npm run case` 寫成 `game/data/case.json`。第三至五天標了「初稿」 |
+| `prototype/engine.js` | 規則（JS 版）：只有第一、二天；文字原型和平衡模擬用它，不再加新規則 |
+| `prototype/main.js`、`prototype/index.html` | 文字原型的畫面（第一、二天） |
+| `game/` | Godot 4.7 版：完整一局的 greybox（五天、評議室、夜晚、結局），480×270。說明見 `game/README.md` |
+| `game/scripts/rules/` | 規則：以這裡為準。第一、二天由 `engine.js` 移植，測試逐步對照 JS 版的結果 |
 | `art/src/` | 美術的程式畫法：32 色、畫點工具、版面、佔位圖、證物。證物只有這一份畫法 |
 | `art/style-frame/` | 風格定稿圖和證物樣板：美術的目標樣子 |
 | `art/bake/`、`tools/` | 美術輸出（`npm run bake`）、案件資料輸出、自動試玩（`npm run check`） |

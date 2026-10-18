@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3]
+[gd_scene load_steps=23 format=3]
 
 [ext_resource type="Script" path="res://scripts/desk/desk.gd" id="desk"]
 [ext_resource type="Texture2D" path="res://art/court/court.png" id="t0"]
@@ -20,6 +20,9 @@
 [ext_resource type="Texture2D" path="res://art/rack/stamp-trust.png" id="t16"]
 [ext_resource type="Texture2D" path="res://art/rack/stamp-doubt.png" id="t17"]
 [ext_resource type="Texture2D" path="res://art/desk/bang.png" id="t18"]
+
+[ext_resource type="Texture2D" path="res://art/rack/stamp-struck.png" id="t_struck"]
+[ext_resource type="Texture2D" path="res://art/desk/plaque-slip.png" id="t_slip"]
 
 [node name="Desk" type="Node2D"]
 script = ExtResource("desk")
@@ -162,6 +165,20 @@ centered = false
 z_index = 311
 position = Vector2(497, 180)
 texture = ExtResource("t17")
+centered = false
+
+[node name="StampStruck" type="Sprite2D" parent="."]
+z_index = 311
+position = Vector2(497, 140)
+visible = false
+texture = ExtResource("t_struck")
+centered = false
+
+[node name="Slip" type="Sprite2D" parent="."]
+z_index = 14
+position = Vector2(330, 253)
+visible = false
+texture = ExtResource("t_slip")
 centered = false
 
 [node name="StampShadow" type="Sprite2D" parent="."]

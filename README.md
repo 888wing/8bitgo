@@ -37,7 +37,7 @@
 設計階段。兩個原型：
 
 - [文字原型](prototype/README.md)：第一、二天，試核心規則。執行 `node prototype/build.js`，然後雙擊 `prototype/dist/index.html`。
-- [Godot 版](game/README.md)：第一天的法庭桌面，像素畫面的手感切片，Godot 4.7。用 Godot 打開 `game/project.godot`，或執行 `godot --path game`。
+- [Godot 版](game/README.md)：完整一局的 greybox（五天、評議室、夜晚、十個結局），Godot 4.7。用 Godot 打開 `game/project.godot`，或執行 `godot --path game`。除了三件證物，美術都是佔位圖；第三至五天的內容是初稿。
 
 美術的目標樣子：[風格定稿圖](art/style-frame/court-desk@4x.png)（第一版，說明見 [06 §10](docs/06-art.md#10-風格定稿圖第一版)）。
 
