@@ -16,12 +16,10 @@ canvas { display: block; image-rendering: pixelated; }
 <body>
 <canvas id="frame" aria-label="第七席風格定稿圖：法庭桌面"></canvas>
 <script type="module">
-import { drawFrame } from './frame.js';
+import { FRAME_TEXT, drawFrame } from './frame.js';
 
 // 先載入畫面上的字，再畫；然後按螢幕實際像素找最大的整數倍顯示。
-const text = '偵緝督察鄭志雄（控方）起火點在三樓樓梯地下門腳都有黑痕？打火機在起火點找到，刻著「樂」字火石平、棉芯乾，點著？被告簽署口供，承認放火佢只係喺地下點過紙？鄭督察……我唔記得。證物對照須知退庭信疑三樓樓梯P2P11/'
-  + '霧港警察3/11/87警署口供紙本人何嘉樂，二十二歲，外賣員，住福安樓四樓。本人承認於福安樓放火。以上內容正確。簽署：我只係喺地下點過張紙';
-await Promise.allSettled(['400 12px "Noto Sans TC"', '500 13px "Noto Sans TC"', '700 12px "Noto Sans TC"', '700 12px "LXGW WenKai TC"'].map((f) => document.fonts.load(f, text)));
+await Promise.allSettled(['400 12px "Noto Sans TC"', '500 13px "Noto Sans TC"', '700 12px "Noto Sans TC"', '700 12px "LXGW WenKai TC"'].map((f) => document.fonts.load(f, FRAME_TEXT)));
 const canvas = drawFrame(document.getElementById('frame'));
 const fit = () => {
   const dpr = window.devicePixelRatio || 1;

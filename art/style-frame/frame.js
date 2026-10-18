@@ -1,10 +1,14 @@
 // 風格定稿圖：一張完整上色的 480×270 法庭桌面。
 // 版面、調色盤和字都照 docs/06-art.md；每一部分都是將來換掉佔位美術時的樣板。
 // 畫的一刻：鄭督察答辯方「……我唔記得。」；放大鏡停在口供頁底的手寫字上，你拿起「疑」字印章，準備蓋在他的口供上。
-import * as P from '../../prototype/desk/pixels.js';
-import * as L from '../../prototype/desk/layout.js';
-import { PAL as C } from '../../prototype/desk/art.js';
-import { EVIDENCE } from './evidence.js';
+import * as P from '../src/pixels.js';
+import * as L from '../src/layout.js';
+import { PAL as C } from '../src/palette.js';
+import { EVIDENCE, EVIDENCE_TEXT } from '../src/evidence.js';
+
+// 定稿圖上的字。畫之前先載入這些字的字型。
+export const FRAME_TEXT = '偵緝督察鄭志雄（控方）起火點在三樓樓梯地下門腳都有黑痕？打火機在起火點找到，刻著「樂」字火石平、棉芯乾，點著？被告簽署口供，承認放火佢只係喺地下點過紙？鄭督察……我唔記得。證物對照須知退庭信疑三樓樓梯P2P11/'
+  + EVIDENCE_TEXT.join('');
 
 // —— 工具 ——
 

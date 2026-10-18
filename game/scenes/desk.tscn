@@ -1,0 +1,195 @@
+[gd_scene load_steps=21 format=3]
+
+[ext_resource type="Script" path="res://scripts/desk/desk.gd" id="desk"]
+[ext_resource type="Texture2D" path="res://art/court/court.png" id="t0"]
+[ext_resource type="Texture2D" path="res://art/court/witness-cheng.png" id="t1"]
+[ext_resource type="Texture2D" path="res://art/court/tick.png" id="t2"]
+[ext_resource type="Texture2D" path="res://art/ui/sound-on.png" id="t3"]
+[ext_resource type="Texture2D" path="res://art/booth/booth.png" id="t4"]
+[ext_resource type="Texture2D" path="res://art/booth/portrait-empty.png" id="t5"]
+[ext_resource type="Texture2D" path="res://art/booth/more.png" id="t6"]
+[ext_resource type="Texture2D" path="res://art/desk/desk.png" id="t7"]
+[ext_resource type="Texture2D" path="res://art/desk/notebook.png" id="t8"]
+[ext_resource type="Texture2D" path="res://art/desk/tray.png" id="t9"]
+[ext_resource type="Texture2D" path="res://art/desk/plaque-inspect.png" id="t10"]
+[ext_resource type="Texture2D" path="res://art/desk/plaque-booklet.png" id="t11"]
+[ext_resource type="Texture2D" path="res://art/desk/arrow-left.png" id="t12"]
+[ext_resource type="Texture2D" path="res://art/desk/arrow-right.png" id="t13"]
+[ext_resource type="Texture2D" path="res://art/desk/loupe.png" id="t14"]
+[ext_resource type="Texture2D" path="res://art/rack/rack.png" id="t15"]
+[ext_resource type="Texture2D" path="res://art/rack/stamp-trust.png" id="t16"]
+[ext_resource type="Texture2D" path="res://art/rack/stamp-doubt.png" id="t17"]
+[ext_resource type="Texture2D" path="res://art/desk/bang.png" id="t18"]
+
+[node name="Desk" type="Node2D"]
+script = ExtResource("desk")
+
+[node name="Bg" type="ColorRect" parent="."]
+offset_right = 480.0
+offset_bottom = 270.0
+mouse_filter = 2
+color = Color(0.0784314, 0.0901961, 0.0862745, 1)
+
+[node name="Court" type="Sprite2D" parent="."]
+texture = ExtResource("t0")
+centered = false
+
+[node name="Witness" type="Sprite2D" parent="."]
+z_index = 1
+position = Vector2(-26, 25)
+visible = false
+texture = ExtResource("t1")
+centered = false
+
+[node name="Tick" type="Sprite2D" parent="."]
+z_index = 1
+visible = false
+texture = ExtResource("t2")
+centered = false
+
+[node name="SoundIcon" type="Sprite2D" parent="."]
+z_index = 1
+position = Vector2(463, 3)
+texture = ExtResource("t3")
+centered = false
+
+[node name="Booth" type="Sprite2D" parent="."]
+z_index = 2
+position = Vector2(0, 96)
+texture = ExtResource("t4")
+centered = false
+
+[node name="Portrait" type="Sprite2D" parent="."]
+z_index = 3
+position = Vector2(47, 104)
+texture = ExtResource("t5")
+centered = false
+
+[node name="NameText" type="Sprite2D" parent="."]
+z_index = 3
+position = Vector2(9, 171)
+centered = false
+
+[node name="DialogueText" type="Sprite2D" parent="."]
+z_index = 3
+position = Vector2(10, 192)
+centered = false
+
+[node name="More" type="Sprite2D" parent="."]
+z_index = 3
+position = Vector2(132, 258)
+visible = false
+texture = ExtResource("t6")
+centered = false
+
+[node name="DeskTop" type="Sprite2D" parent="."]
+z_index = 10
+position = Vector2(150, 96)
+texture = ExtResource("t7")
+centered = false
+
+[node name="Notebook" type="Sprite2D" parent="."]
+z_index = 11
+position = Vector2(154, 100)
+texture = ExtResource("t8")
+centered = false
+
+[node name="Page" type="Sprite2D" parent="."]
+z_index = 12
+position = Vector2(160, 110)
+centered = false
+
+[node name="Tray" type="Sprite2D" parent="."]
+z_index = 13
+position = Vector2(330, 100)
+texture = ExtResource("t9")
+centered = false
+
+[node name="PageNo" type="Sprite2D" parent="."]
+z_index = 14
+position = Vector2(292, 256)
+centered = false
+
+[node name="Inspect" type="Sprite2D" parent="."]
+z_index = 14
+position = Vector2(154, 253)
+texture = ExtResource("t10")
+centered = false
+
+[node name="Booklet" type="Sprite2D" parent="."]
+z_index = 14
+position = Vector2(202, 253)
+texture = ExtResource("t11")
+centered = false
+
+[node name="PrevPage" type="Sprite2D" parent="."]
+z_index = 14
+position = Vector2(250, 253)
+texture = ExtResource("t12")
+centered = false
+
+[node name="NextPage" type="Sprite2D" parent="."]
+z_index = 14
+position = Vector2(270, 253)
+texture = ExtResource("t13")
+centered = false
+
+[node name="Docs" type="Node2D" parent="."]
+
+[node name="Lens" type="Sprite2D" parent="."]
+z_index = 300
+centered = false
+
+[node name="Loupe" type="Sprite2D" parent="."]
+z_index = 301
+position = Vector2(330, 206)
+texture = ExtResource("t14")
+centered = false
+
+[node name="Rack" type="Sprite2D" parent="."]
+z_index = 310
+position = Vector2(484, 134)
+texture = ExtResource("t15")
+centered = false
+
+[node name="StampTrust" type="Sprite2D" parent="."]
+z_index = 311
+position = Vector2(497, 140)
+texture = ExtResource("t16")
+centered = false
+
+[node name="StampDoubt" type="Sprite2D" parent="."]
+z_index = 311
+position = Vector2(497, 180)
+texture = ExtResource("t17")
+centered = false
+
+[node name="StampShadow" type="Sprite2D" parent="."]
+z_index = 319
+visible = false
+centered = false
+
+[node name="Overlay" type="Sprite2D" parent="."]
+z_index = 400
+position = Vector2(150, 96)
+visible = false
+centered = false
+
+[node name="RedLine" type="Node2D" parent="."]
+z_index = 410
+
+[node name="Bang" type="Sprite2D" parent="."]
+z_index = 420
+visible = false
+texture = ExtResource("t18")
+centered = false
+
+[node name="Caption" type="Sprite2D" parent="."]
+z_index = 430
+position = Vector2(152, 56)
+centered = false
+
+[node name="Modal" type="Sprite2D" parent="."]
+z_index = 500
+visible = false
+centered = false

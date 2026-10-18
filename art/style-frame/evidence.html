@@ -16,42 +16,15 @@ canvas { display: block; image-rendering: pixelated; }
 <body>
 <canvas id="frame" aria-label="證物樣板：每件證物的原大和放大鏡下的樣子"></canvas>
 <script type="module">
-import * as P from '../../prototype/desk/pixels.js';
-import { PAL as C } from '../../prototype/desk/art.js';
-import { EVIDENCE } from './evidence.js';
+import { SHEET_TEXT, SHEET_W, SHEET_H, drawSheet } from './sheet.js';
 
-// 證物樣板：每件證物上面是原大（放在桌上的樣子），下面是放大鏡看到的兩倍。
-const text = '霧港警察證物P2福安樓三樓3/11/87樓梯現場相片P1警署口供紙本人何嘉樂，二十二歲，外賣員，住福安樓四樓。本人承認於福安樓放火。以上內容正確。簽署：我只係喺地下點過張紙證物袋裡的打火機原大放大鏡下（兩倍）';
-await Promise.allSettled(['400 12px "Noto Sans TC"', '500 12px "Noto Sans TC"', '700 12px "Noto Sans TC"', '700 12px "LXGW WenKai TC"'].map((f) => document.fonts.load(f, text)));
-
-const canvas = document.getElementById('frame');
-canvas.width = 640;
-canvas.height = 432;
-const ctx = canvas.getContext('2d');
-ctx.imageSmoothingEnabled = false;
-P.rect(ctx, 0, 0, 640, 432, C.leather);
-for (let y = 0; y < 432; y += 1) for (let x = 0; x < 640; x += 1) if (((x * 7 + y * 13) ^ (x * y)) % 9 === 0) P.px(ctx, x, y, C.leatherDark);
-
-const label = (str, x, y, color = C.wallLight) => ctx.drawImage(P.text(str, { size: 12, weight: 500, lineHeight: 14, color, threshold: 110 }).canvas, x, y);
-const place = (img, x, y) => {
-  P.dither(ctx, x + 2, y + 2, img.width, img.height, C.black);
-  ctx.drawImage(img, x, y);
-};
-let x = 16;
-for (const [id, e] of Object.entries(EVIDENCE)) {
-  label(`${id} ${e.name}`, x, 8, C.white);
-  label('原大', x, 28);
-  place(e.draw(1), x, 44);
-  const y2 = 44 + e.h + 10;
-  label('放大鏡下（兩倍）', x, y2);
-  place(e.draw(2), x, y2 + 16);
-  x += e.w * 2 + 16;
-}
+await Promise.allSettled(['400 12px "Noto Sans TC"', '500 12px "Noto Sans TC"', '700 12px "Noto Sans TC"', '700 12px "LXGW WenKai TC"'].map((f) => document.fonts.load(f, SHEET_TEXT)));
+const canvas = drawSheet(document.getElementById('frame'));
 const fit = () => {
   const dpr = window.devicePixelRatio || 1;
-  const k = Math.max(1, Math.floor(Math.min((innerWidth - 32) * dpr / 640, (innerHeight - 32) * dpr / 432)));
-  canvas.style.width = `${(640 * k) / dpr}px`;
-  canvas.style.height = `${(432 * k) / dpr}px`;
+  const k = Math.max(1, Math.floor(Math.min((innerWidth - 32) * dpr / SHEET_W, (innerHeight - 32) * dpr / SHEET_H)));
+  canvas.style.width = `${(SHEET_W * k) / dpr}px`;
+  canvas.style.height = `${(SHEET_H * k) / dpr}px`;
 };
 fit();
 addEventListener('resize', fit);

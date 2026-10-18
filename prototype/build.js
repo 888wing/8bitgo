@@ -1,5 +1,5 @@
-// 把原型打包成單一 HTML 檔，不用伺服器，雙擊就可以玩。
-// 輸出：dist/index.html（文字版）、dist/desk.html（桌面手感切片，需要連網載入 Phaser 和字型）。
+// 把文字原型打包成單一 HTML 檔，不用伺服器，雙擊就可以玩。輸出：dist/index.html。
+// 桌面手感切片已經改用 Godot 重寫，見 game/。
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -44,4 +44,3 @@ function build(page, entry, out) {
 }
 
 build('index.html', 'main.js', 'dist/index.html');
-build('desk/index.html', 'desk/main.js', 'dist/desk.html');

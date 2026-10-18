@@ -1,0 +1,79 @@
+[
+ {
+  "file": "00-dialogue.png",
+  "style": "dialogue",
+  "text": "凌晨兩點十分，消防接報。火好快就燒到四樓。",
+  "width": 124,
+  "lineHeight": 16
+ },
+ {
+  "file": "01-dialogue.png",
+  "style": "dialogue",
+  "text": "我哋喺起火點搵到一個打火機，上面刻住個「樂」字。",
+  "width": 124,
+  "lineHeight": 16
+ },
+ {
+  "file": "02-name.png",
+  "style": "name",
+  "text": "偵緝督察鄭志雄（控方）",
+  "width": 0,
+  "lineHeight": 14
+ },
+ {
+  "file": "03-hand.png",
+  "style": "hand",
+  "text": "打火機在起火點找到，刻著「樂」字",
+  "width": 134,
+  "lineHeight": 14
+ },
+ {
+  "file": "04-hand.png",
+  "style": "hand",
+  "text": "火石平、棉芯乾，點著？",
+  "width": 132,
+  "lineHeight": 13
+ },
+ {
+  "file": "05-body.png",
+  "style": "body",
+  "text": "證物 P2：打火機",
+  "width": 300,
+  "lineHeight": 14
+ },
+ {
+  "file": "06-body.png",
+  "style": "body",
+  "text": "你發現了 2 個細節，寫了 3 句批註，蓋了 6 個印。",
+  "width": 396,
+  "lineHeight": 15
+ },
+ {
+  "file": "07-bold.png",
+  "style": "bold",
+  "text": "再玩一次",
+  "width": 0,
+  "lineHeight": 15
+ },
+ {
+  "file": "08-title.png",
+  "style": "title",
+  "text": "第七席",
+  "width": 0,
+  "lineHeight": 28
+ },
+ {
+  "file": "09-heading.png",
+  "style": "heading",
+  "text": "手感切片完",
+  "width": 0,
+  "lineHeight": 20
+ },
+ {
+  "file": "10-small.png",
+  "style": "small",
+  "text": "1/2",
+  "width": 0,
+  "lineHeight": 11
+ }
+]

@@ -1,0 +1,28 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/main.gd" id="main"]
+[ext_resource type="Script" path="res://scripts/desk/sound.gd" id="sound"]
+
+[node name="Main" type="Node"]
+script = ExtResource("main")
+
+[node name="Sound" type="Node" parent="."]
+script = ExtResource("sound")
+
+[node name="View" type="SubViewportContainer" parent="."]
+texture_filter = 1
+offset_right = 480.0
+offset_bottom = 270.0
+
+[node name="Viewport" type="SubViewport" parent="View"]
+handle_input_locally = false
+snap_2d_transforms_to_pixel = true
+snap_2d_vertices_to_pixel = true
+canvas_item_default_texture_filter = 0
+size = Vector2i(480, 270)
+render_target_update_mode = 4
+
+[node name="Rotate" type="TextureRect" parent="."]
+visible = false
+texture_filter = 1
+mouse_filter = 2
