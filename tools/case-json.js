@@ -1,6 +1,6 @@
 // 把 prototype/case.js 的案件資料寫成 game/data/case.json，給 Godot 版讀。
 // 內容仍然只改 case.js；改完執行 `npm run case`。prototype 的測試會檢查兩邊一致。
-// morning() 和 ending() 是函數，只有文字原型用到，不寫進 JSON。
+// morning() 和 ending() 是函數，只有文字原型用到，不寫進 JSON；Godot 版用 MORNINGS 和 ENDINGS。
 import { writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -11,6 +11,7 @@ export const OUT = join(dirname(fileURLToPath(import.meta.url)), '..', 'game', '
 const KEYS = [
   'SEATS', 'AI_IDS', 'LINKS', 'CLAIMS', 'EXHIBITS', 'REASONS', 'CARD_NAMES', 'THOUGHTS', 'JURORS', 'REACTIONS',
   'LEAN_IN', 'ROOMS', 'CALLOUT', 'RULEBOOK', 'PROLOGUE', 'WITNESSES', 'DAYS', 'NIGHT', 'SCHEDULE', 'PLAYTEST',
+  'NIGHT_EVENTS', 'MORNINGS', 'DISMISSAL', 'SITE', 'SLIPS', 'ALTERNATIVE', 'ENDINGS', 'SAFE',
 ];
 
 export function caseJson() {

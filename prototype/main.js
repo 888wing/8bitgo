@@ -637,7 +637,8 @@ async function run() {
   courtScene();
   for (const beat of C.PROLOGUE) record(beat);
   await playBeats(C.PROLOGUE);
-  for (const { day, witnesses, adjourn } of C.DAYS) {
+  // 文字原型只玩第一、二天；完整五天在 Godot 版。
+  for (const { day, witnesses, adjourn } of C.DAYS.slice(0, 2)) {
     game.day = day;
     if (day > 1) {
       setPlace(`第${CN[day]}天　早上`);

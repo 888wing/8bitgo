@@ -92,7 +92,7 @@ function play(style, seed) {
   const rand = makeRandom(seed);
   const game = E.createGame({ seed });
   const day1Guilty = [];
-  for (const { day } of DAYS) {
+  for (const { day } of DAYS.slice(0, 2)) {
     court(game, day, style, rand);
     const { result, aiGuilty } = room(game, style, rand);
     day1Guilty.push(aiGuilty);

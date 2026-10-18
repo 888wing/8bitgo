@@ -16,3 +16,14 @@ test('每句頁邊批註都寫得進筆記本的一行', () => {
 test('Godot 版的案件資料和 case.js 一致', () => {
   assert.equal(readFileSync(OUT, 'utf8'), caseJson(), 'game/data/case.json 過時了：在 repo 根目錄執行 npm run case');
 });
+
+// 法庭的對白框每行 9 個字、最多 4 行：一句不超過 36 字（docs/06-art.md §4）。
+test('法庭上的每一句對白都放得進對白框', async () => {
+  const C = await import('../case.js');
+  const beats = [
+    ...Object.values(C.WITNESSES).flatMap((w) => w.script),
+    ...C.DAYS.flatMap((d) => [...(d.open ?? []), ...(d.closing ?? []), ...d.adjourn]),
+    ...C.SLIPS.flatMap((s) => s.answer),
+  ];
+  for (const b of beats) assert.ok([...b.text].length <= 36, `太長（${[...b.text].length} 字）：${b.text}`);
+});

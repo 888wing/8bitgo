@@ -1,5 +1,6 @@
-// 福安樓縱火案：原型只包含序幕和第一、二天。
-// 格式見 docs/05-production.md；完整案件見 docs/04-case.md。
+// 福安樓縱火案。格式見 docs/05-production.md；完整案件見 docs/04-case.md。
+// 第一、二天是文字原型試過的內容；第三至五天、提問紙條、夜晚的選擇、早晨和結局是初稿（標了「初稿」），等作者逐句改。
+// 文字原型只玩第一、二天；Godot 版玩完整五天。
 
 export const SEATS = [
   { id: 'leung', seat: 1, name: '梁守仁', short: '梁', call: '梁伯', role: '主席，退休文員' },
@@ -33,6 +34,25 @@ export const CLAIMS = {
   w2: { witness: 'wat', link: null, text: '拉扯時，被告的東西跌滿地', label: '屈② 東西跌滿地' },
   h1: { witness: 'wat', link: 'motive', text: '街坊說，鄺婆婆很怕被告', label: '屈：街坊傳聞' },
   k1: { witness: 'chan', link: 'means', text: '火災前那個下午，被告買了兩公升火水', label: '陳① 買了火水' },
+  // 初稿：第三至五天，以及提問紙條問出來的說法。against 為真的是辯方的說法：信它，那一環就存疑。
+  g4: { witness: 'chung', link: null, text: '更亭的電視要插電', label: '鍾④ 電視要插電' },
+  w3: { witness: 'wat', link: null, text: '拉扯之後，屈家輝幫被告執起地上的東西', label: '屈③ 幫被告執嘢' },
+  k2: { witness: 'chan', link: null, text: '被告說火水是買給阿婆的', label: '陳② 火水買給阿婆' },
+  f1: { witness: 'man', link: 'presence', text: '三人吸入濃煙致死，時間約兩點一刻至兩點半', label: '文① 兩點一刻至兩點半' },
+  f2: { witness: 'man', link: null, text: '鄺婆婆房內有一個火水暖爐', label: '文② 火水暖爐' },
+  f3: { witness: 'man', link: null, text: '婆婆手腕有戴鐲的壓痕，現場卻找不到手鐲', label: '文③ 不見了的手鐲' },
+  f4: { witness: 'man', link: null, text: '遺物清單上沒有任何首飾', label: '文④ 沒有首飾' },
+  f5: { witness: 'man', link: null, text: '暖爐裡還有火水，開關是開著的', label: '文⑤ 暖爐開著' },
+  q1: { witness: 'au', link: 'ignition', text: '只有一個起火點：三樓樓梯', label: '區① 只有一個起火點' },
+  q2: { witness: 'au', link: 'means', text: '助燃劑是火水', label: '區② 助燃劑是火水' },
+  q3: { witness: 'au', link: 'ignition', against: true, text: '不排除地下另有起火點', label: '區③ 地下另有起火點？' },
+  q4: { witness: 'au', link: null, text: '火場沒有找到鄺婆婆的首飾', label: '區④ 沒有首飾' },
+  l1: { witness: 'lee', link: null, text: '被告那個星期一直在找他的打火機', label: '李① 一直在找打火機' },
+  l2: { witness: 'lee', link: 'presence', against: true, text: '案發當晚，被告一點四十才離開他家', label: '李② 一點四十才離開' },
+  d1: { witness: 'ho', link: 'means', against: true, text: '火水是買給鄺婆婆的暖爐用的', label: '何① 火水買給婆婆' },
+  d2: { witness: 'ho', link: 'ignition', against: true, text: '打火機早就不見了', label: '何② 打火機早就不見' },
+  d3: { witness: 'ho', link: 'presence', against: true, text: '他返到大廈就即刻上樓', label: '何③ 即刻上樓' },
+  d4: { witness: 'ho', link: null, text: '他在地下寫字樓門口點過火', label: '何④ 地下點過火' },
 };
 
 export const EXHIBITS = {
@@ -71,6 +91,36 @@ export const EXHIBITS = {
     code: 'P3', name: '火水單據', text: '五金舖的手寫單據。',
     details: [{ id: 'P3a', text: '十一月二日，火水兩公升。' }],
   },
+  // 初稿：第三至五天的證物，以及第四天視察現場時你自己記下的東西。
+  P5: {
+    code: 'P5', name: '驗屍報告', text: '法醫的報告，附死者生前的照片。',
+    details: [
+      { id: 'P5a', text: '死亡時間：約兩點一刻至兩點半。' },
+      { id: 'P5b', text: '附頁的生前照片：鄺婆婆手上戴著一隻龍鳳金鐲。', zoom: true },
+    ],
+  },
+  P6: {
+    code: 'P6', name: '火場相片組', text: '消防處拍的六張相片。',
+    details: [
+      { id: 'P6a', text: '三樓樓梯燒得最深，牆上有一道 V 形的燒痕。' },
+      { id: 'P6b', text: '其中一張相的角落：地下的信箱燒熔了一角。', zoom: true },
+    ],
+  },
+  V1: {
+    code: 'V1', name: '視察現場', text: '你在福安樓看到的東西，記在筆記本最後一頁。',
+    details: [
+      { id: 'V1a', text: '地下寫字樓門口，有一道向上燻的燒痕。', zoom: true },
+      { id: 'V1b', text: '樓梯的燈座是空的，沒有燈泡。', zoom: true },
+      { id: 'V1c', text: '保安鍾永發一直站在樓梯口，望著你們。', zoom: true },
+    ],
+  },
+  P7: {
+    code: 'P7', name: '被告當晚的衣物', text: '一件外套，封在證物袋裡。',
+    details: [
+      { id: 'P7a', text: '袖口有煙灰。' },
+      { id: 'P7b', text: '口袋裡有一張燒焦的傳單，印著「昇平置業」。', zoom: true },
+    ],
+  },
 };
 
 // 理由：說法 × 證物（或另一個說法）。card 是在評議室出示時推出去的那件東西。
@@ -97,37 +147,65 @@ export const REASONS = {
     note: '冇電，樓梯點會有燈？', jot: '冇電，點會有燈？',
   },
   R5: {
-    card: 'D1', claims: ['k1'], effect: 'doubt', pairs: [['k1', 'D1b'], ['k1', 'D1a']],
+    card: 'D1', claims: ['k1'], effect: 'doubt', pairs: [['k1', 'D1b'], ['k1', 'D1a'], ['k1', 'f2'], ['k1', 'f5'], ['k2', 'D1b']],
     note: '冇電又天凍，買火水可能係攞嚟取暖、點燈。', jot: '冇電天凍，火水取暖？',
   },
   R6: {
     card: 'P3', claims: ['w1', 'k1'], effect: 'trust', pairs: [['w1', 'k1'], ['w1', 'P3a']], from: 'wong',
     note: '一個禮拜前講要燒，燒之前一日就去買火水。', jot: '講完要燒，就買火水',
   },
+  // 初稿：第三至五天的理由。RT、RS 對被告不利。
+  R3b: {
+    card: 'D1', claims: ['g2'], effect: 'doubt', pairs: [['g4', 'D1b'], ['g4', 'D1a']],
+    note: '部電視要插電，成幢樓冇電，佢點睇？', jot: '插電嘅電視，點睇？',
+  },
+  RL: {
+    card: 'P2', claims: ['c2'], effect: 'doubt', pairs: [['w2', 'l1'], ['w3', 'l1'], ['w2', 'd2']],
+    note: '拉扯嗰陣啲嘢跌晒落地，之後佢就搵唔到個火機？', jot: '打火機嗰陣已經唔見？',
+  },
+  RV: {
+    card: 'V1', claims: ['q1'], effect: 'doubt', pairs: [['q1', 'V1a']],
+    note: '地下寫字樓門口都燒過，點會只得一個起火點？', jot: '地下都燒過。',
+  },
+  RT: {
+    card: 'P5', claims: ['l2'], effect: 'doubt', pairs: [['f1', 'l2'], ['P5a', 'l2']],
+    note: '一點四十走，兩點一刻起火：時間上，佢仲有可能。', jot: '時間上，佢仲有可能。',
+  },
+  RS: {
+    card: 'P7', claims: ['d3'], effect: 'doubt', pairs: [['d3', 'P7a'], ['d3', 'P7b']],
+    note: '袖口有煙灰，袋裡有燒焦的傳單：佢喺地下做過啲嘢。', jot: '佢喺地下做過啲嘢。',
+  },
 };
 
-export const CARD_NAMES = { P4: '口供頁底的手寫字', P2: '打火機', P1: '樓梯相片', D1: '截電通知', P3: '火水單據' };
+export const CARD_NAMES = {
+  P4: '口供頁底的手寫字', P2: '打火機', P1: '樓梯相片', D1: '截電通知', P3: '火水單據',
+  P5: '驗屍報告', V1: '視察現場的筆記', P7: '被告的外套',
+};
 
 // 對得上，但你看不懂：視角的限制。
 export const THOUGHTS = [
   { pair: ['c1', 'P1b'], text: '地下門腳都有黑痕……不過你唔識睇燒痕。', jot: '地下門腳都有黑痕？' },
+  { pair: ['q1', 'P6b'], text: '地下個信箱都燒熔咗……不過你唔識睇火場。', jot: '地下信箱都燒熔咗？' },
+  { pair: ['f3', 'P5b'], text: '相入面嗰隻龍鳳金鐲……去咗邊？', jot: '龍鳳金鐲去咗邊？' },
 ];
 
 const every = (value) => Object.fromEntries(Object.keys(CLAIMS).map((id) => [id, value]));
+// 初稿：信控方的人，對辯方證人和被告的說法一開始存疑。
+const DEFENSE_DOUBT = { l1: 'doubt', l2: 'doubt', d1: 'doubt', d2: 'doubt', d3: 'doubt' };
 
 // initial：聽到說法時的預設印章。accepts：哪些理由說得動他。locks：翻不動的格子，值是撬得開它的理由。
 export const JURORS = {
   leung: {
-    initial: every('trust'),
-    accepts: ['R1', 'R3', 'R4', 'RB', 'R6'],
+    initial: { ...every('trust'), ...DEFENSE_DOUBT },
+    accepts: ['R1', 'R3', 'R4', 'RB', 'R6', 'R3b', 'RL', 'RV', 'RT', 'RS'],
     locks: { c3: ['R1'] },
     ask: '我信督察。文件上寫乜，我就信乜。',
     contagion: '一個講兩次大話嘅人，佢其他說話我都唔敢信。',
     swayed: '……不過羅生都話佢好老實。',
   },
   wong: {
-    initial: every('trust'),
-    accepts: ['R5', 'R6'],
+    initial: { ...every('trust'), ...DEFENSE_DOUBT, q3: 'doubt' },
+    accepts: ['R5', 'R6', 'R3b', 'RT', 'RS'],
     locks: { c2: [], w1: [] },
     rule: 'motiveEnough',
     vote: 'impatient',
@@ -135,31 +213,39 @@ export const JURORS = {
     swayed: '人哋都話佢老實啦。',
   },
   law: {
-    initial: every('trust'),
+    initial: { ...every('trust'), ...DEFENSE_DOUBT, q3: 'doubt' },
     accepts: [],
     locks: every([]),
     vote: 'guilty',
     ask: '……我冇咩好講。',
   },
   lam: {
-    initial: { c1: 'doubt', c2: 'doubt', c3: 'doubt', g1: 'doubt', g2: null, g3: null, w1: 'doubt', w2: 'trust', h1: null, k1: 'trust' },
-    accepts: ['R1', 'R2', 'R3', 'R4', 'R5', 'RB'],
+    initial: {
+      c1: 'doubt', c2: 'doubt', c3: 'doubt', g1: 'doubt', g2: null, g3: null, w1: 'doubt', w2: 'trust', h1: null, k1: 'trust',
+      g4: 'trust', w3: 'trust', k2: 'trust', f1: 'doubt', f2: 'trust', f3: 'trust', f4: 'trust', f5: 'trust',
+      q1: 'doubt', q2: null, q3: 'trust', q4: 'trust', l1: 'trust', l2: 'trust', d1: 'trust', d2: 'trust', d3: 'trust', d4: 'trust',
+    },
+    accepts: ['R1', 'R2', 'R3', 'R4', 'R5', 'RB', 'R3b', 'RL', 'RV'],
     locks: { c3: [] },
     ask: '督察、看更、代理人，我一個都唔信。',
     contagion: '佢講過兩次大話，其他嘢都唔使信。',
   },
   so: {
-    initial: every('trust'),
-    accepts: ['R5', 'R6'],
+    initial: { ...every('trust'), l1: null, l2: null, d1: null, d2: null, d3: null },
+    accepts: ['R5', 'R6', 'RT', 'RS'],
     locks: { w1: [] },
     conformist: true,
     ask: '大家點睇，我……我都差唔多。',
     swayed: '羅生都咁講……',
   },
   fung: {
-    initial: { c1: 'doubt', c2: 'trust', c3: null, g1: null, g2: null, g3: null, w1: null, w2: null, h1: null, k1: 'trust' },
-    accepts: ['R2', 'R3', 'R4'],
-    leansIn: ['R2', 'R3', 'R4'],
+    initial: {
+      c1: 'doubt', c2: 'trust', c3: null, g1: null, g2: null, g3: null, w1: null, w2: null, h1: null, k1: 'trust',
+      g4: null, w3: null, k2: null, f1: 'trust', f2: 'trust', f3: 'trust', f4: null, f5: 'trust',
+      q1: 'doubt', q2: 'trust', q3: 'trust', q4: null, l1: null, l2: null, d1: null, d2: null, d3: null, d4: 'trust',
+    },
+    accepts: ['R2', 'R3', 'R4', 'R3b', 'RL', 'RV', 'RT', 'RS'],
+    leansIn: ['R2', 'R3', 'R4', 'R3b', 'RV'],
     gives: 'RB',
     ask: '你睇呢張相：三樓樓梯嘅燒痕，係由下面燒上嚟嘅。起火點，未必喺三樓。',
     askAgain: '我講過喇：證物先算。',
@@ -171,8 +257,11 @@ export const JURORS = {
 export const REACTIONS = {
   leung: {
     P4: { flip: '（推一推眼鏡）地下……同起火點唔同。份口供，我收返。' },
-    P2: { reject: '火機乾咗，都唔代表當晚冇用過。' },
+    P2: { reject: '火機乾咗，都唔代表當晚冇用過。', flip: '拉扯之後就唔見咗……咁個火機，未必喺佢手。' },
     P1: { flip: '馮 Sir 係專家……火由下面燒上嚟，起火點就未必喺三樓。' },
+    V1: { flip: '地下……都燒過？咁就唔止一個起火點。', reject: '專家話一個起火點，就係一個。' },
+    P5: { flip: '一點四十走，兩點一刻起火……時間上係夠嘅。' },
+    P7: { flip: '袖口有灰……佢點會即刻上樓？' },
     D1: { flip: '冇電……咁佢點睇電視？樓梯又點會有燈？' },
     default: { flip: '……咁講都有道理。', agree: '我都係咁睇。', reject: '咁都唔代表乜嘢。' },
   },
@@ -181,6 +270,9 @@ export const REACTIONS = {
     P4: { reject: '手寫嗰兩句，邊個知係咪佢寫㗎？' },
     P1: { reject: '專家都會睇錯。' },
     D1: { reject: '冇電都可以用電芯電視㗎。', flip: '冇電都可以用電芯電視㗎。……火水就算啦，成條街都買。' },
+    V1: { reject: '燒痕邊度都有啦。' },
+    P5: { flip: '我都話係佢啦。', agree: '我都話係佢。' },
+    P7: { flip: '仲話即刻上樓？呃鬼食豆腐。', agree: '係囉。' },
     default: { flip: '……算你啦。', agree: '係囉。', reject: '唔好再拖啦。' },
   },
   law: { default: { flip: '……', agree: '……', reject: '……' } },
@@ -189,16 +281,24 @@ export const REACTIONS = {
     P1: { flip: '連起火點都未必啱？', agree: '連起火點都未必啱。' },
     D1: { flip: '我就話個看更有古怪。', agree: '我就話個看更有古怪。' },
     P3: { reject: '講吓啫，唔代表佢做。' },
+    V1: { flip: '我就話唔止一把火。', agree: '我一早就話有問題。' },
+    P5: { reject: '時間啱，唔代表係佢。' },
+    P7: { reject: '袖口有灰，邊個冇喺火場附近行過？' },
     default: { flip: '我都係咁諗。', agree: '我都係咁諗。', reject: '我唔係咁睇。' },
   },
   so: {
     D1: { flip: '天咁凍……婆婆又冇電……', reject: '我唔知……三條人命呀。' },
+    P5: { flip: '兩點一刻……佢真係有時間……' },
+    P7: { flip: '佢……佢真係喺地下做過嘢？' },
     default: { flip: '如果係咁……', agree: '係囉……', reject: '我唔知……三條人命呀。' },
   },
   fung: {
     P2: { flip: '火石磨到咁平……真係打唔著。', agree: '我知，個火機打唔著。' },
     D1: { flip: '冇電，樓梯就冇燈。呢個係事實。', agree: '冇電，樓梯就冇燈。' },
     P1: { agree: '我講過喇。' },
+    V1: { flip: '門口嗰道燒痕，係另一個起火點。', agree: '我講過喇：火由下面燒上嚟。' },
+    P5: { flip: '時間係咁，就係咁。' },
+    P7: { flip: '袖口煙灰係真嘅。佢一定喺火附近。' },
     default: { flip: '證物係咁，就係咁。', agree: '嗯。', reject: '講嘢唔算證據。' },
   },
 };
@@ -207,6 +307,7 @@ export const REACTIONS = {
 export const LEAN_IN = {
   P2: '（湊過來看）火石磨到咁平……真係打唔著。',
   D1: '（拿起通知書看了很久）冇電，樓梯就冇燈。呢個係事實。',
+  V1: '（雙手抱胸，點頭）地下嗰道燒痕，我都見到。',
 };
 
 export const ROOMS = {
@@ -256,6 +357,71 @@ export const ROOMS = {
       },
     ],
   },
+  // 初稿：第三至五天。羅生第三天起再失言；這次指出來，主席會報告法官（expose），他第二天被解除職務。
+  3: {
+    board: ['c1', 'c2', 'g1', 'g2', 'g3', 'w1', 'k1', 'f1', 'f2', 'f3', 'f4', 'f5'],
+    intro: [
+      { who: '旁白', text: '第三天。黑板上，口供那一行被主席用粉筆劃走了。' },
+      { who: 'leung', text: '法官話份口供唔算。……我哋由頭再傾。' },
+    ],
+    openings: [
+      { id: 'd3-leung', juror: 'leung', text: '冇咗份口供，我要再諗吓。不過督察同看更，我仍然信。', reveal: ['c1', 'g1'] },
+      { id: 'd3-wong', juror: 'wong', text: '口供唔算，打火機都仲喺度啦。', reveal: ['c2'] },
+      { id: 'd3-law', juror: 'law', text: '我同意主席。', reveal: ['g1'] },
+      { id: 'd3-lam', juror: 'lam', text: '一份逼出嚟嘅口供，你哋信咗兩日。', reveal: ['c1'] },
+      { id: 'd3-so', juror: 'so', text: '醫生話兩點一刻……同看更講嘅時間夾。', reveal: ['f1'] },
+      { id: 'd3-fung', juror: 'fung', text: '暖爐、火水、冇電。呢件事唔簡單。', reveal: ['f2'] },
+    ],
+    interjections: [
+      {
+        id: 'd3-slip', when: 'slip', juror: 'law', text: '個看更我識，喺昇平做咗十年，好老實㗎。',
+        improper: true, effect: { override: ['g1', 'g2', 'g3'], value: 'trust', jurors: ['leung', 'so', 'wong'], expose: 'law' },
+      },
+    ],
+  },
+  4: {
+    board: ['c1', 'c2', 'g1', 'g3', 'k1', 'f1', 'q1', 'q2', 'q3', 'q4', 'l1', 'l2'],
+    intro: [
+      { who: '旁白', text: '視察完現場，大家的鞋底都有灰。吊扇一直在轉。' },
+      { who: 'leung', text: '專家話只有一個起火點。我哋照樣逐條傾。' },
+    ],
+    openings: [
+      { id: 'd4-leung', juror: 'leung', text: '區主任做咗廿年，佢話一個起火點，我信。', reveal: ['q1'] },
+      { id: 'd4-wong', juror: 'wong', text: '火水、火機、揚言放火，仲要傾幾耐？', reveal: ['q2'] },
+      { id: 'd4-law', juror: 'law', text: '同意。', reveal: ['q1'] },
+      { id: 'd4-lam', juror: 'lam', text: '佢個朋友話佢一點四十先走，時間夾唔到。', reveal: ['l2'] },
+      { id: 'd4-so', juror: 'so', text: '個朋友……會唔會幫佢講大話？', reveal: ['l2'] },
+      { id: 'd4-fung', juror: 'fung', text: '樓梯口嗰度，我睇得好清楚。', reveal: ['q1'] },
+    ],
+    interjections: [
+      {
+        id: 'd4-slip', when: 'slip', juror: 'law', text: '個看更企喺樓梯口，佢咁老實，唔會講大話。',
+        improper: true, effect: { override: ['g1', 'g3'], value: 'trust', jurors: ['leung', 'so', 'wong'], expose: 'law' },
+      },
+    ],
+  },
+  5: {
+    board: ['c1', 'c2', 'g1', 'g3', 'k1', 'f1', 'q1', 'q3', 'l2', 'd1', 'd2', 'd3', 'd4'],
+    final: true,
+    intro: [
+      { who: '旁白', text: '最後一天。窗外的雨停了。' },
+      { who: 'leung', text: '今日唔可以再投未決。法官講咗：謀殺唔肯定，可以考慮縱火。' },
+    ],
+    openings: [
+      { id: 'd5-leung', juror: 'leung', text: '佢話即刻上樓，但袖口有灰。', reveal: ['d3'] },
+      { id: 'd5-wong', juror: 'wong', text: '我開咗廿年舖，咩人一眼睇得穿。有罪。', reveal: ['d3'] },
+      { id: 'd5-law', juror: 'law', text: '有罪。', reveal: ['d2'] },
+      { id: 'd5-lam', juror: 'lam', text: '佢講嘅每一句，都夾得上截電同暖爐。', reveal: ['d1'] },
+      { id: 'd5-so', juror: 'so', text: '個火水……真係買俾婆婆？', reveal: ['d1'] },
+      { id: 'd5-fung', juror: 'fung', text: '兩個起火點，要分開諗。', reveal: ['q3'] },
+    ],
+    interjections: [],
+    // 最後一天沒有五票：延長評議，每節兩個動作，最多兩節。
+    extension: [
+      { who: '旁白', text: '庭警送來茶水。法官要求陪審團繼續評議。' },
+      { who: 'leung', text: '再傾一次。今次一定要有五票。' },
+    ],
+  },
 };
 
 export const CALLOUT = {
@@ -267,6 +433,16 @@ export const CALLOUT = {
     { who: 'leung', text: '羅生，庭上冇人講過個看更喺邊度做嘢。你點知？' },
     { who: 'law', text: '……我估嘅。' },
   ],
+  'd3-slip': [
+    { who: 'leung', text: '羅生，庭上冇人講過個看更喺邊度做嘢。你上次都係咁講。' },
+    { who: 'law', text: '……' },
+    { who: 'leung', text: '我會寫張紙條，話俾法官知。' },
+  ],
+  'd4-slip': [
+    { who: 'leung', text: '羅生，你又係咁。你點識個看更？' },
+    { who: 'law', text: '……我冇講過識佢。' },
+    { who: 'leung', text: '我會寫張紙條，話俾法官知。' },
+  ],
   invalid: [{ who: 'leung', text: '佢講嘅嘢冇問題。唔好浪費時間。' }],
 };
 
@@ -276,6 +452,8 @@ export const RULEBOOK = {
   r3: '《司法效率條例》：每日休庭後暫議表決（有罪、無罪或未決）。任何一方達五票，即日裁決，審訊即時結束。',
   r4: '法官指示忽略的說話，須在筆記上蓋「不予採納」；評議時不得引用。',
   r5: '傳聞證據（轉述別人的說話）不可作為事實依據。',
+  r6: '最後一天的表決不設「未決」，只可以投有罪或無罪。',
+  r7: '替代罪名：如果不肯定被告犯謀殺罪，但肯定他放過火，可以裁定謀殺罪不成立、縱火罪成立。',
 };
 
 export const PROLOGUE = [
@@ -370,6 +548,68 @@ export const WITNESSES = {
       { who: '辯方', text: '冇其他問題。' },
     ],
   },
+  // 初稿：第三至五天的證人。
+  man: {
+    name: '法醫文慧儀', side: '控方', claims: ['f1', 'f2', 'f3'],
+    script: [
+      { who: '庭警', text: '傳召控方第五證人，法醫文慧儀醫生。' },
+      { who: '旁白', text: '戴眼鏡的女人，翻開一份很厚的報告。聲音很輕。' },
+      { who: '控方', text: '醫生，三位死者嘅死因係？' },
+      { who: '文醫生', text: '三位都係吸入濃煙致死。時間大約兩點一刻到兩點半。', claim: 'f1', exhibit: 'P5' },
+      { who: '控方', text: '冇其他問題。' },
+      { who: '辯方', text: '醫生，鄺婆婆間房入面，有冇乜嘢特別？' },
+      { who: '文醫生', text: '房入面有一個火水暖爐。', claim: 'f2' },
+      { who: '辯方', text: '佢身上呢？' },
+      { who: '文醫生', text: '佢手腕有一圈好深嘅壓痕，係戴咗好多年鐲留低嘅。' },
+      { who: '文醫生', text: '不過，現場冇搵到手鐲。', claim: 'f3' },
+      { who: '辯方', text: '冇其他問題。' },
+    ],
+  },
+  au: {
+    name: '火警調查主任區志輝', side: '控方', claims: ['q1', 'q2'],
+    script: [
+      { who: '庭警', text: '傳召控方第六證人，消防處火警調查主任區志輝。' },
+      { who: '旁白', text: '他把一疊相片排在證人台上，像排撲克牌。' },
+      { who: '控方', text: '區主任，你調查嘅結論係？' },
+      { who: '區主任', text: '只有一個起火點，就係三樓樓梯。', claim: 'q1', exhibit: 'P6' },
+      { who: '區主任', text: '助燃劑係火水。樓梯嘅燒痕有火水味。', claim: 'q2' },
+      { who: '控方', text: '冇其他問題。' },
+      { who: '辯方', text: '主任，你有冇睇過地下寫字樓？' },
+      { who: '區主任', text: '……我嘅重點係起火點。' },
+      { who: '辯方', text: '冇其他問題。' },
+    ],
+  },
+  lee: {
+    name: '被告友人李志健', side: '辯方', claims: ['l1', 'l2'],
+    script: [
+      { who: '庭警', text: '傳召辯方第一證人，李志健。' },
+      { who: '旁白', text: '和被告差不多年紀。他一直望著犯人欄，好像想說甚麼。' },
+      { who: '辯方', text: '李先生，案發前嗰個星期，被告有冇搵過乜嘢？' },
+      { who: '李志健', text: '佢成個禮拜都搵緊佢個火機，話唔記得跌咗喺邊。', claim: 'l1' },
+      { who: '辯方', text: '十一月三號凌晨，被告幾點離開你屋企？' },
+      { who: '李志健', text: '一點四十。我記得，因為電視收咗台。', claim: 'l2' },
+      { who: '控方', text: '你同被告咁老友，會唔會幫佢講大話？' },
+      { who: '李志健', text: '……唔會。' },
+      { who: '控方', text: '冇其他問題。' },
+    ],
+  },
+  ho: {
+    name: '被告何嘉樂', side: '辯方', claims: ['d1', 'd2', 'd3'],
+    script: [
+      { who: '庭警', text: '傳召辯方第二證人，被告何嘉樂。' },
+      { who: '旁白', text: '他走出犯人欄。經過陪審席時，望了你一眼。' },
+      { who: '辯方', text: '嘉樂，你點解買火水？' },
+      { who: '何嘉樂', text: '冇電，婆婆好凍。佢個暖爐要火水，我幫佢買。', claim: 'd1' },
+      { who: '辯方', text: '個火機呢？' },
+      { who: '何嘉樂', text: '個火機早就唔見咗。我搵咗成個禮拜。', claim: 'd2' },
+      { who: '辯方', text: '嗰晚你返到大廈之後，做過啲乜？' },
+      { who: '何嘉樂', text: '我返到就即刻上樓瞓覺。', claim: 'd3' },
+      { who: '控方', text: '法官大人，控方呈上 P7，被告當晚嘅外套。', exhibit: 'P7' },
+      { who: '控方', text: '你件外套嘅袖口，點解有煙灰？' },
+      { who: '何嘉樂', text: '……我唔知。' },
+      { who: '控方', text: '冇其他問題。' },
+    ],
+  },
 };
 
 export const DAYS = [
@@ -381,6 +621,30 @@ export const DAYS = [
     day: 2, title: '動機與手段', witnesses: ['wat', 'chan'],
     adjourn: [{ who: '法官', text: '今日聆訊到此。陪審團請進行暫議。' }],
   },
+  // 初稿：open 是開庭時法官的話（第三天剔除口供），closing 是第五天的結案陳詞和總結。
+  {
+    day: 3, title: '口供爭議', witnesses: ['man'],
+    open: [
+      { who: '法官', text: '本席裁定：被告的口供在不當情況下取得，不予接納。' },
+      { who: '法官', text: '陪審團須忽略督察的第三個說法，以及證物 P4。', strike: 'c3', strikeExhibit: 'P4' },
+    ],
+    adjourn: [{ who: '法官', text: '今日聆訊到此。陪審團請進行暫議。' }],
+  },
+  {
+    day: 4, title: '視察現場', witnesses: ['au', 'lee'], site: true,
+    adjourn: [{ who: '法官', text: '今日聆訊到此。陪審團請進行暫議。' }],
+  },
+  {
+    day: 5, title: '被告作供', witnesses: ['ho'], final: true,
+    closing: [
+      { who: '控方', text: '各位陪審員，火水、火機、動機，全部指向被告。' },
+      { who: '辯方', text: '冇電、冇燈、冇火機。控方嘅故事，每一環都有洞。' },
+      { who: '法官', text: '謀殺罪要證明被告放火，而且有意致人死亡。' },
+      { who: '法官', text: '如果你們不肯定是謀殺，但肯定被告放過火，可以裁定縱火罪成立。', rule: 'r7' },
+      { who: '法官', text: '今天的表決不設未決。', rule: 'r6' },
+    ],
+    adjourn: [{ who: '法官', text: '陪審團請退庭，作最後評議。' }],
+  },
 ];
 
 export const NIGHT = {
@@ -390,20 +654,309 @@ export const NIGHT = {
     { who: '母親', text: '聽日仲要去？' },
     { who: '旁白', text: '今日少做的生意：大約三百八十元。' },
   ],
+  // 初稿
+  2: [
+    { who: '旁白', text: '夜晚，信昌押。櫃台上壓著一張租單：後天到期。' },
+    { who: '母親', text: '業主又寄信嚟。你仲要去幾多日？' },
+  ],
+  3: [
+    { who: '旁白', text: '夜晚，信昌押。今日要交租。' },
+    { who: '旁白', text: '夾萬裡的錢數了兩次，還差一點。' },
+  ],
+  4: [
+    { who: '旁白', text: '夜晚，信昌押。' },
+    { who: '女兒', text: '爸爸，佢係咪壞人嚟㗎？' },
+    { who: '旁白', text: '你不知道怎樣回答。' },
+  ],
 };
+
+// —— 以下全部是初稿，只有 Godot 版用 ——
+// 條件（when、needs）是字串或字串的陣列，全部成立才算：
+//   heard:說法　zoomed:細節　reason:理由　flag:名字 或 flag:名字=值1|值2　stamp:說法=trust|doubt（你的印章）
+//   verdict:G|NG|A|none　voted:G（你最後一票）　day:1|2|3　out:離開審判的原因　dismissed:陪審員
+//   jurors:說法=doubt>=3（多少個陪審員這樣看）　not:條件　any:條件;條件
+
+// 夜晚的一件事：先播 intro，再讓你選。out 是你因此離開審判（結局在第二天早上揭曉）。
+export const NIGHT_EVENTS = {
+  1: {
+    intro: [
+      { who: '旁白', text: '收舖前，一個中年女人推門進來。是被告的母親何太。' },
+      { who: '何太', text: '老闆，呢隻玉鐲……我要錢請律師。' },
+    ],
+    prompt: '何太的玉鐲，開價多少？',
+    options: [
+      { id: 'fair', text: '照市價：八十元', flags: { jade: 'fair' }, beats: [{ who: '旁白', text: '你寫好當票，數了八十元給她。' }] },
+      { id: 'generous', text: '多給一點：一百五十元', flags: { jade: 'generous' }, beats: [{ who: '何太', text: '……多謝你。' }, { who: '旁白', text: '這個月的租，要再想辦法。' }] },
+      { id: 'low', text: '壓價：四十元', flags: { jade: 'low' }, beats: [{ who: '何太', text: '四十蚊……都好。' }, { who: '旁白', text: '她把錢摺好，收進衫袋。' }] },
+    ],
+  },
+  2: {
+    intro: [
+      { who: '旁白', text: '一個年輕女人來押一部相機。' },
+      { who: '阿詩', text: '你係第七號陪審員，係咪？我係《霧港日報》嘅記者。' },
+      { who: '阿詩', text: '你間舖嘅業主，係昇平置業嘅子公司。你知唔知？' },
+    ],
+    prompt: '你怎樣回答阿詩？',
+    options: [
+      { id: 'tell', text: '說出評議室裡的事', flags: { press: 'told' }, out: 'dismissed', beats: [{ who: '你', text: '……佢哋大部分都覺得佢有罪。' }, { who: '阿詩', text: '多謝。我唔會寫你個名。' }] },
+      { id: 'silent', text: '甚麼都不說', beats: [{ who: '你', text: '我唔可以講。' }, { who: '阿詩', text: '咁……相機你照收啦。' }] },
+      { id: 'declare', text: '明天向法庭申報利益', flags: { press: 'declared' }, out: 'dismissed', beats: [{ who: '你', text: '我會話俾法官知，我間舖同昇平有關。' }, { who: '阿詩', text: '你肯定？你會被踢出陪審團。' }] },
+    ],
+  },
+  3: {
+    intro: [
+      { who: '旁白', text: '關門前，保安鍾永發來了。他把一隻金鐲放上櫃台。' },
+      { who: '鍾永發', text: '我阿媽留落嚟嘅。押得幾多？' },
+      { who: '旁白', text: '龍鳳金鐲。很舊，內圈磨得很光。' },
+      { who: '你', text: '……驗屍報告嗰張相，鄺婆婆手上就係呢隻？', when: 'zoomed:P5b' },
+    ],
+    prompt: '你怎樣處理這隻金鐲？',
+    options: [
+      { id: 'report', text: '報警', needs: 'zoomed:P5b', flags: { bangle: 'reported' }, out: 'bangle', beats: [{ who: '你', text: '你喺度等等。' }, { who: '旁白', text: '你拿起電話。鍾永發轉身就走。' }] },
+      { id: 'keep', text: '收下', flags: { bangle: 'kept' }, beats: [{ who: '旁白', text: '你寫好當票，把金鐲放進夾萬最底一格。' }] },
+      { id: 'refuse', text: '不收', flags: { bangle: 'refused' }, beats: [{ who: '你', text: '呢隻我唔收。' }, { who: '旁白', text: '他把金鐲收回袋裡，走進雨中。' }] },
+    ],
+  },
+  4: {
+    intro: [
+      { who: '旁白', text: '一個戴帽的男人指著櫃面一部壞收音機。' },
+      { who: '陌生人', text: '呢部收音機，五千蚊，我要佢。' },
+      { who: '旁白', text: '那部收音機，值十元。' },
+    ],
+    prompt: '五千元。收不收？',
+    options: [
+      { id: 'take', text: '收下五千元', flags: { bribe: 'taken' }, beats: [{ who: '旁白', text: '他放下一個信封，拿起收音機就走。信封裡的錢，夠交三個月租。' }] },
+      { id: 'refuse', text: '不收', beats: [{ who: '你', text: '呢部壞咗，唔賣。' }, { who: '陌生人', text: '你諗清楚。' }] },
+      { id: 'report', text: '明天向法庭舉報', flags: { bribe: 'reported' }, out: 'mistrial', beats: [{ who: '你', text: '你叫咩名？我會話俾法官知。' }, { who: '旁白', text: '他壓低帽子，走了。' }] },
+    ],
+  },
+};
+
+// 早晨：報紙上是昨天的票數（{G}、{NG}、{U}）。
+export const MORNINGS = {
+  2: [
+    { who: '旁白', text: '早上。母親把報紙放在你面前。' },
+    { who: '報紙', text: '《霧港日報》：福安樓案陪審團首日暫議　有罪 {G} 票、無罪 {NG} 票、未決 {U} 票' },
+    { who: '旁白', text: '法院門外的人比昨天多。有人喊：「殺人填命！」', when: 'tally:G>=4' },
+    { who: '旁白', text: '法院門外的人比昨天多。有人舉起紙牌：「還我家園」。', when: 'not:tally:G>=4' },
+  ],
+  3: [
+    { who: '旁白', text: '早上。電車叮叮駛過，報攤掛著今天的報紙。' },
+    { who: '報紙', text: '《霧港日報》：福安樓案第二日暫議　有罪 {G} 票、無罪 {NG} 票、未決 {U} 票' },
+    { who: '報紙', text: '《霧港日報》獨家：陪審員透露，評議室多數認為被告有罪', when: 'flag:press=told' },
+  ],
+  4: [
+    { who: '報紙', text: '《霧港日報》：福安樓案第三日暫議　有罪 {G} 票、無罪 {NG} 票、未決 {U} 票' },
+    { who: '旁白', text: '早上，一部旅遊巴把陪審團載到西區。' },
+  ],
+  5: [
+    { who: '報紙', text: '《霧港日報》：福安樓案第四日暫議　有罪 {G} 票、無罪 {NG} 票、未決 {U} 票' },
+    { who: '旁白', text: '最後一天。法院門外的人分成兩邊，中間站著警察。' },
+  ],
+};
+
+// 被揭發的陪審員，第二天早上由法官宣布解除職務。
+export const DISMISSAL = {
+  law: [
+    { who: '法官', text: '第三號陪審員羅永昌，已被解除職務。' },
+    { who: '法官', text: '陪審團餘下六人，裁決仍然需要五票。' },
+  ],
+};
+
+// 第四天開庭前，陪審團到福安樓視察現場。看到的東西就是證物 V1 的細節。
+export const SITE = {
+  intro: [
+    { who: '旁白', text: '福安樓。樓梯口拉起了封鎖線，牆身仍然是黑的。' },
+    { who: '法官', text: '各位陪審員，你哋可以睇，但唔可以掂任何嘢。' },
+  ],
+  outro: [{ who: '旁白', text: '你把看到的東西，記在筆記本最後一頁。' }],
+};
+
+// 提問紙條：每天一張。證人退庭前遞給法官，由法官代問。needs 是這條問題出現的條件。
+export const SLIPS = [
+  {
+    id: 's-tv', day: 1, witness: 'chung', question: '更亭部電視，係插電定用電芯？',
+    answer: [
+      { who: '法官', text: '證人，陪審團想知道：更亭的電視，是插電還是用電池？' },
+      { who: '鍾永發', text: '……插電嘅。', claim: 'g4' },
+    ],
+  },
+  {
+    id: 's-pickup', day: 2, witness: 'wat', needs: 'heard:w2', question: '拉扯之後，跌落地嘅嘢有冇人執起？',
+    answer: [
+      { who: '法官', text: '證人，陪審團想知道：拉扯之後，地上的東西是誰執起的？' },
+      { who: '屈家輝', text: '……我幫佢執返啲嘢。', claim: 'w3' },
+    ],
+  },
+  {
+    id: 's-forwhom', day: 2, witness: 'chan', question: '被告買火水嗰陣，有冇講係買俾邊個？',
+    answer: [
+      { who: '法官', text: '證人，陪審團想知道：被告買火水時，有沒有說是給誰用的？' },
+      { who: '陳金水', text: '佢話……阿婆冇電，好凍。', claim: 'k2' },
+    ],
+  },
+  {
+    id: 's-heater', day: 3, witness: 'man', needs: 'heard:f2', question: '婆婆個暖爐，當晚係咪開咗？',
+    answer: [
+      { who: '法官', text: '醫生，陪審團想知道：死者房內的暖爐，當晚是否在使用？' },
+      { who: '文醫生', text: '暖爐入面仲有火水，開關係開咗嘅。', claim: 'f5' },
+    ],
+  },
+  {
+    id: 's-bangle', day: 3, witness: 'man', needs: 'zoomed:P5b', question: '婆婆相入面嗰隻金鐲，去咗邊？',
+    answer: [
+      { who: '法官', text: '醫生，陪審團想知道：死者生前戴的金鐲，有沒有在現場找到？' },
+      { who: '文醫生', text: '遺物清單上冇任何首飾。', claim: 'f4' },
+    ],
+  },
+  {
+    id: 's-second', day: 4, witness: 'au', needs: 'zoomed:V1a', question: '地下寫字樓門口嘅燒痕，會唔會係另一個起火點？',
+    answer: [
+      { who: '法官', text: '主任，陪審團想知道：地下寫字樓門口的燒痕，會否是另一個起火點？' },
+      { who: '區主任', text: '……' },
+      { who: '區主任', text: '……唔排除。', claim: 'q3' },
+    ],
+  },
+  {
+    id: 's-jewel', day: 4, witness: 'au', needs: ['flag:bangle=kept', 'zoomed:P5b'], question: '火場有冇搵到鄺婆婆嘅首飾？',
+    answer: [
+      { who: '法官', text: '主任，陪審團想知道：火場有沒有找到死者的首飾？' },
+      { who: '區主任', text: '冇。我哋都覺得奇怪。', claim: 'q4' },
+    ],
+  },
+  {
+    id: 's-downstairs', day: 5, witness: 'ho', needs: 'any:zoomed:P7b;reason:RS', question: '你返到大廈之後，有冇喺地下做過啲乜？',
+    answer: [
+      { who: '法官', text: '被告，陪審團想知道：你回到大廈之後，有沒有在地下做過甚麼？' },
+      { who: '何嘉樂', text: '……' },
+      { who: '何嘉樂', text: '我塞咗封收樓信入寫字樓門縫，點咗佢。我以為佢熄咗。', claim: 'd4' },
+    ],
+  },
+];
+
+// 替代罪名（第五天）：信「地下另有起火點」，又信被告在地下點過火（或不信他即刻上樓）。
+export const ALTERNATIVE = { when: ['stamp:q3=trust', 'any:stamp:d4=trust;stamp:d3=doubt'] };
+
+// 結局：由上而下，第一個條件成立的就是。每個結局之後，再打開當舖的夾萬（SAFE）。
+const BACK = [
+  { who: '旁白', text: '庭警打開門。你們回到法庭。' },
+  { who: '書記', text: '陪審團是否已有裁決？' },
+];
+
+export const ENDINGS = [
+  {
+    id: 'dismissed', title: '被解除職務', when: 'out:dismissed',
+    beats: [
+      { who: '法官', text: '第七號陪審員，請你留低。' },
+      { who: '法官', text: '今日報紙登出咗評議室嘅討論。本席解除你嘅職務。', when: 'flag:press=told' },
+      { who: '法官', text: '你申報咗利益。本席解除你嘅職務，多謝你嘅坦白。', when: 'flag:press=declared' },
+      { who: '旁白', text: '你坐在法庭外的長椅上，聽不到裡面發生甚麼。' },
+      { who: '報紙', text: '《霧港日報》：福安樓案六人陪審團裁決　{RESULT}' },
+    ],
+  },
+  {
+    id: 'bangle', title: '交出金鐲', when: 'out:bangle',
+    beats: [
+      { who: '旁白', text: '警察來了。你成為證人，被解除陪審員的職務。' },
+      { who: '旁白', text: '審判沒有你，照樣繼續。' },
+      { who: '報紙', text: '《霧港日報》：保安鍾永發被傳召協助調查', when: 'jurors:g1=doubt>=3' },
+      { who: '報紙', text: '《霧港日報》：福安樓案保安否認拿走死者財物，照常上班', when: 'not:jurors:g1=doubt>=3' },
+      { who: '報紙', text: '《霧港日報》：福安樓案六人陪審團裁決　{RESULT}' },
+    ],
+  },
+  {
+    id: 'mistrial', title: '審訊無效', when: 'out:mistrial',
+    beats: [
+      { who: '法官', text: '有人企圖收買陪審員。本席解散陪審團，本案擇日重審。' },
+      { who: '旁白', text: '收買調查開始。沒有人知道會查到多深。' },
+      { who: '旁白', text: '電視上，羅生用外套遮住了頭。', when: 'dismissed:law' },
+    ],
+  },
+  {
+    id: 'bribed', title: '收下五千元', when: ['verdict:G', 'flag:bribe=taken', 'voted:G'],
+    beats: [
+      ...BACK,
+      { who: 'leung', text: '……有罪。' },
+      { who: '旁白', text: '你交到租了。' },
+      { who: '旁白', text: '第二年，你的唐樓還是被收了。' },
+    ],
+  },
+  {
+    id: 'oneDay', title: '一日審判', when: ['verdict:G', 'day:1'],
+    beats: [
+      ...BACK,
+      { who: 'leung', text: '……有罪。' },
+      { who: '旁白', text: '何嘉樂冇郁。旁聽席上，他母親哭出聲。' },
+      { who: '報紙', text: '《霧港日報》：福安樓縱火案一日審結　被告謀殺罪成' },
+      { who: '旁白', text: '三年後，福安樓變成豪宅。你的唐樓，是下一棟。' },
+    ],
+  },
+  {
+    id: 'guilty', title: '罪成', when: 'verdict:G',
+    beats: [
+      ...BACK,
+      { who: 'leung', text: '……有罪。' },
+      { who: '旁白', text: '何嘉樂被判終身監禁。' },
+      { who: '報紙', text: '《霧港日報》：福安樓縱火案　被告謀殺罪成' },
+      { who: '旁白', text: '你翻開筆記本，停在保安那一頁。你在那裡蓋過「疑」。', when: ['voted:G', 'any:stamp:g1=doubt;stamp:g3=doubt'] },
+    ],
+  },
+  {
+    id: 'quickAcquittal', title: '速判無罪', when: ['verdict:NG', 'day:1|2|3'],
+    beats: [
+      ...BACK,
+      { who: 'leung', text: '……無罪。' },
+      { who: '旁白', text: '何嘉樂用雙手掩住臉。旁聽席上，有人罵出聲。' },
+      { who: '報紙', text: '《霧港日報》：福安樓案被告獲釋　死者家屬：公道何在' },
+      { who: '旁白', text: '看更鍾永發，之後再冇人問過佢任何嘢。' },
+    ],
+  },
+  {
+    id: 'reasonableDoubt', title: '合理懷疑', when: 'verdict:NG',
+    beats: [
+      ...BACK,
+      { who: 'leung', text: '……無罪。' },
+      { who: '旁白', text: '何嘉樂走出法院時，下著毛毛雨。' },
+      { who: '報紙', text: '《霧港日報》：福安樓案被告謀殺罪名不成立' },
+      { who: '旁白', text: '報紙角落有一段小字：消防處不排除另有起火點。', when: 'heard:q3' },
+    ],
+  },
+  {
+    id: 'alternative', title: '替代裁決', when: 'verdict:A',
+    beats: [
+      ...BACK,
+      { who: 'leung', text: '謀殺罪……不成立。縱火罪，成立。' },
+      { who: '旁白', text: '何嘉樂抬起頭，望向陪審席。' },
+      { who: '報紙', text: '《霧港日報》：福安樓案被告謀殺罪不成立　縱火罪成立' },
+      { who: '旁白', text: '一星期後，保安鍾永發被傳召協助調查。' },
+    ],
+  },
+  {
+    id: 'hung', title: '無法裁決', when: 'verdict:none',
+    beats: [
+      ...BACK,
+      { who: 'leung', text: '……我哋冇辦法有五票。' },
+      { who: '法官', text: '陪審團無法達成裁決。本席解散陪審團，本案擇日重審。' },
+      { who: '報紙', text: '《霧港日報》：福安樓案重審　新陪審團一日審結' },
+    ],
+  },
+];
+
+// 每個尾聲最後都打開當舖的夾萬。
+export const SAFE = [
+  { who: '旁白', text: '你打開當舖的夾萬。' },
+  { who: '旁白', text: '何太的玉鐲，已經被贖回了。', when: ['flag:jade', 'any:verdict:NG;verdict:A'] },
+  { who: '旁白', text: '何太的玉鐲還在。當票，下個月到期。', when: ['flag:jade', 'not:any:verdict:NG;verdict:A'] },
+  { who: '旁白', text: '當票的背面，有人用鉛筆寫了兩個字：多謝。', when: 'flag:jade=generous' },
+  { who: '旁白', text: '那隻龍鳳金鐲，仍然躺在最底一格。', when: 'flag:bangle=kept' },
+  { who: '旁白', text: '最底一格空著。那隻金鐲，已經交給了警察。', when: 'flag:bangle=reported' },
+];
 
 export function morning(day, tally) {
   if (day !== 2) return [];
-  return [
-    { who: '旁白', text: '早上。母親把報紙放在你面前。' },
-    { who: '報紙', text: `《霧港日報》：福安樓案陪審團首日暫議　有罪 ${tally.G} 票、無罪 ${tally.NG} 票、未決 ${tally.U} 票` },
-    {
-      who: '旁白',
-      text: tally.G >= 4
-        ? '法院門外的人比昨天多。有人喊：「殺人填命！」'
-        : '法院門外的人比昨天多。有人舉起紙牌：「還我家園」。',
-    },
-  ];
+  return MORNINGS[2]
+    .filter((b) => !b.when || (b.when === 'tally:G>=4') === (tally.G >= 4))
+    .map(({ who, text }) => ({ who, text: text.replace('{G}', tally.G).replace('{NG}', tally.NG).replace('{U}', tally.U) }));
 }
 
 // 審訊提早結束時，這些證人永遠不會出庭。

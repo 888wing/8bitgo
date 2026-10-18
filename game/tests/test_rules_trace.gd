@@ -32,7 +32,7 @@ func _replay(g: Dictionary) -> String:
 	else:
 		game = Rules.create_game(g["opts"])
 	var expected: Variant = g["init"].duplicate(true)
-	var d := _first_diff(game, expected, "狀態")
+	var d := _first_diff(_without_ext(game), expected, "狀態")
 	if d != "":
 		return "%s 剛建好：%s" % [label, d]
 	var calls: Array = g["calls"]
@@ -46,13 +46,20 @@ func _replay(g: Dictionary) -> String:
 			return "%s：%s" % [where, d]
 		if c.has("patch"):
 			expected = _patch(expected, c["patch"])
-		d = _first_diff(game, expected, "狀態")
+		d = _first_diff(_without_ext(game), expected, "狀態")
 		if d != "":
 			return "%s：%s" % [where, d]
 	d = _first_diff(expected, g["final"], "狀態")
 	if d != "":
 		return "%s：軌跡檔本身不一致（逐步還原的狀態和 final 不同）%s" % [label, d]
 	return ""
+
+
+# 第三至五天新增的狀態都在 game.ext，JS 版沒有，比對時不看它。
+func _without_ext(game: Dictionary) -> Dictionary:
+	var copy := game.duplicate()
+	copy.erase("ext")
+	return copy
 
 
 # 呼叫和 JS 的 E.xxx(game, ...args) 一一對應。
